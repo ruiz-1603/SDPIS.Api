@@ -1,0 +1,1750 @@
+﻿/* ==========================================================================
+   SDPIS — Sistema de Denuncias de Productos de Interés Sanitario
+   Ministerio de Salud de Costa Rica
+   Hoja de estilos única para React (formulario público + portal institucional)
+   Basado en: estándares de diseño D01–D10, arquitectura del sistema y el
+   formulario de denuncia ya construido.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. RAÍZ — VARIABLES CSS (colores, tipografía, espaciado, sombras, radios)
+   ========================================================================== */
+:root {
+    /* --- Colores primarios (D04) --- */
+    --color-navy: #021a53;
+    --color-blue: #002e7a;
+    --color-gold: #cfac65;
+    /* --- Colores secundarios (D05) --- */
+    --color-gray: #c1c5c8;
+    --color-blue-medium: #164687;
+    --color-white: #ffffff;
+    /* --- Tintes derivados (uso interno de componentes) --- */
+    --color-gold-soft: #f2e9d8;
+    --color-gray-soft: #eef0f2;
+    --color-bg: #f4f5f6;
+    /* --- Texto --- */
+    --color-ink: #152241;
+    --color-ink-muted: #5b6479;
+    --color-ink-invertido: #c9d2e6;
+    /* --- Estados semánticos (formularios y validación) --- */
+    --color-danger: #a13246;
+    --color-danger-soft: #f4e2e5;
+    --color-ok: #1e7a4c;
+    --color-ok-soft: #e3f2e9;
+    --color-amber: #8a6a1f;
+    --color-amber-soft: #fbeed9;
+    /* --- Badges de criticidad (valores institucionales fijos) --- */
+    --color-critico-alto: #dc2626;
+    --color-critico-alto-soft: #fce8e8;
+    --color-critico-medio: #8a6a1f;
+    --color-critico-medio-soft: #fbeed9;
+    --color-critico-bajo: #1e7a4c;
+    --color-critico-bajo-soft: #e3f2e9;
+    /* --- Tipografía (D08) --- */
+    --font-heading: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+    --font-body: Arial, Helvetica, sans-serif;
+    --fs-h1: clamp(30px, 3.2vw, 44px);
+    --fs-h2: clamp(24px, 2.6vw, 34px);
+    --fs-h3: clamp(19px, 2vw, 26px);
+    --fs-body: 16px;
+    --fs-small: 13px;
+    --fs-caption: 12px;
+    /* --- Espaciado (tokens) --- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 40px;
+    --space-8: 48px;
+    /* --- Radios --- */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+    /* --- Sombras --- */
+    --shadow-sm: 0 1px 4px rgba(2, 26, 83, 0.08);
+    --shadow-md: 0 2px 10px rgba(2, 26, 83, 0.1);
+    --shadow-lg: 0 12px 32px rgba(2, 26, 83, 0.22);
+    /* --- Transiciones --- */
+    --transition: 0.2s ease-in-out;
+    /* --- Capas (z-index) --- */
+    --z-sidebar: 100;
+    --z-panel: 200;
+    --z-modal: 300;
+    --z-toast: 400;
+    /* --- Layout --- */
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 72px;
+}
+
+/* ==========================================================================
+   2. RESET Y BASE
+   ========================================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-navy);
+    margin: 0 0 var(--space-3);
+}
+
+h1 {
+    font-size: var(--fs-h1);
+}
+
+h2 {
+    font-size: var(--fs-h2);
+}
+
+h3 {
+    font-size: var(--fs-h3);
+}
+
+p {
+    margin: 0 0 var(--space-3);
+}
+
+a {
+    color: var(--color-blue-medium);
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+button {
+    font-family: inherit;
+}
+
+/* Foco visible accesible en todo elemento interactivo (heurística 1 y 5) */
+:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+/* ==========================================================================
+   3. LAYOUT GENERAL Y APP SHELL (portal institucional)
+   ========================================================================== */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrap {
+    padding: var(--space-6);
+    flex: 1;
+}
+
+/* Barra superior interna: migas de pan, buscador y acciones rápidas */
+.topbar-interna {
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-gray-soft);
+    padding: var(--space-4) var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.breadcrumbs {
+    font-size: var(--fs-small);
+    color: var(--color-ink-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+    .breadcrumbs a {
+        color: var(--color-blue-medium);
+    }
+
+    .breadcrumbs .actual {
+        color: var(--color-ink);
+        font-weight: 600;
+    }
+
+.busqueda-rapida {
+    flex: 1;
+    max-width: 320px;
+    position: relative;
+}
+
+    .busqueda-rapida input {
+        width: 100%;
+        padding: 9px 12px 9px 34px;
+        border: 1px solid var(--color-gray);
+        border-radius: var(--radius-pill);
+        font-size: var(--fs-small);
+        background: var(--color-gray-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235b6479' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 12px center;
+    }
+
+.acciones-rapidas {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+/* Layout dividido: columna principal + columna lateral de reglas/historial */
+.layout-split {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+/* ==========================================================================
+   4. BARRA LATERAL IZQUIERDA (SIDEBAR INTERNO)
+   ========================================================================== */
+.sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    background: var(--color-navy);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sidebar);
+    transition: width var(--transition);
+}
+
+    .sidebar.collapsed {
+        width: var(--sidebar-width-collapsed);
+    }
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    min-height: 64px;
+}
+
+.sidebar-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: radial-gradient(circle at center, var(--color-navy) 0 34%, transparent 35%), conic-gradient(from 0deg, var(--color-gold) 0 8%, transparent 0 25%, var(--color-gold) 25% 33%, transparent 0 50%, var(--color-gold) 50% 58%, transparent 0 75%, var(--color-gold) 75% 83%, transparent 0 100%);
+    border: 2px solid var(--color-gold);
+}
+
+.sidebar-brand {
+    min-width: 0;
+}
+
+    .sidebar-brand .eyebrow {
+        font-size: 10px;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+        color: var(--color-gold);
+        font-weight: 600;
+    }
+
+    .sidebar-brand .titulo {
+        font-family: var(--font-heading);
+        font-size: 16px;
+        color: var(--color-white);
+        white-space: nowrap;
+    }
+
+.sidebar.collapsed .sidebar-brand,
+.sidebar.collapsed .menu-label,
+.sidebar.collapsed .usuario-info,
+.sidebar.collapsed .menu-group-label {
+    display: none;
+}
+
+.btn-collapse {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--color-ink-invertido);
+    cursor: pointer;
+    padding: var(--space-1);
+}
+
+.sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-3) 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.menu-group-label {
+    font-size: 10.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 700;
+    padding: var(--space-4) var(--space-4) var(--space-2);
+}
+
+.menu-item {
+    position: relative;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 11px var(--space-4);
+    color: rgba(255, 255, 255, 0.78);
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+
+    .menu-link:hover {
+        background: var(--color-blue-medium);
+        color: var(--color-white);
+    }
+
+.menu-item.active .menu-link {
+    border-left-color: var(--color-gold);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-white);
+    font-weight: 600;
+}
+
+.menu-link .icono {
+    flex-shrink: 0;
+    display: flex;
+}
+
+.menu-label {
+    flex: 1;
+    font-size: 13.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-counter {
+    background: var(--color-gold);
+    color: var(--color-navy);
+    border-radius: var(--radius-pill);
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 1px 7px;
+    flex-shrink: 0;
+}
+
+/* Submenús plegables */
+.menu-group .menu-link .chevron {
+    margin-left: auto;
+    transition: transform var(--transition);
+}
+
+.menu-group.open .menu-link .chevron {
+    transform: rotate(90deg);
+}
+
+.submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition);
+}
+
+.menu-group.open .submenu {
+    max-height: 400px;
+}
+
+.submenu .menu-link {
+    padding-left: var(--space-7);
+    font-size: 13px;
+}
+
+/* Pie del sidebar: perfil del usuario y cierre de sesión */
+.sidebar-footer {
+    padding: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.usuario-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.usuario-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-gold);
+    color: var(--color-navy);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.usuario-info {
+    min-width: 0;
+}
+
+.usuario-nombre {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.usuario-rol {
+    font-size: 11.5px;
+    color: var(--color-ink-invertido);
+}
+
+.btn-logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: var(--color-white);
+    border-radius: var(--radius-sm);
+    padding: 9px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+    .btn-logout:hover {
+        background: var(--color-danger);
+        border-color: var(--color-danger);
+    }
+
+/* Botón hamburguesa (oculto en escritorio) */
+.btn-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--color-navy);
+    cursor: pointer;
+    padding: var(--space-2);
+}
+
+/* ==========================================================================
+   5. COMPONENTES INSTITUCIONALES (KPIs, badges, chips)
+   ========================================================================== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.kpi-card {
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4) var(--space-5);
+    border-top: 3px solid var(--color-gold);
+}
+
+.kpi-label {
+    font-size: var(--fs-caption);
+    color: var(--color-ink-muted);
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+}
+
+.kpi-value {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    color: var(--color-navy);
+    line-height: 1.1;
+}
+
+.kpi-delta {
+    font-size: 11.5px;
+    font-weight: 600;
+    margin-top: var(--space-1);
+}
+
+    .kpi-delta.positivo {
+        color: var(--color-ok);
+    }
+
+    .kpi-delta.negativo {
+        color: var(--color-danger);
+    }
+
+/* Tarjeta genérica de contenido (portal interno) */
+.card {
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-5);
+    overflow: hidden;
+}
+
+.card-head {
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--color-gray-soft);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+    .card-head .num {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--color-navy);
+        color: var(--color-gold);
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .card-head h2, .card-head h3 {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .card-head .subtitulo {
+        font-size: var(--fs-caption);
+        color: var(--color-ink-muted);
+        margin-top: 1px;
+    }
+
+.card-body {
+    padding: var(--space-5);
+}
+
+/* Badges de criticidad */
+.badge-criticidad {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+}
+
+    .badge-criticidad.alto {
+        background: var(--color-critico-alto-soft);
+        color: var(--color-critico-alto);
+    }
+
+    .badge-criticidad.medio {
+        background: var(--color-critico-medio-soft);
+        color: var(--color-critico-medio);
+    }
+
+    .badge-criticidad.bajo {
+        background: var(--color-critico-bajo-soft);
+        color: var(--color-critico-bajo);
+    }
+
+/* Estado de la denuncia */
+.badge-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+}
+
+    .badge-estado.pendiente {
+        background: var(--color-gray-soft);
+        color: var(--color-ink-muted);
+    }
+
+    .badge-estado.en-tiempo {
+        background: var(--color-ok-soft);
+        color: var(--color-ok);
+    }
+
+    .badge-estado.en-revision {
+        background: #eef2f9;
+        color: var(--color-blue-medium);
+    }
+
+    .badge-estado.finalizado {
+        background: var(--color-gray-soft);
+        color: var(--color-navy);
+    }
+
+/* Chip de plazo */
+.plazo-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+}
+
+    .plazo-chip.en-tiempo {
+        background: var(--color-ok-soft);
+        color: var(--color-ok);
+    }
+
+    .plazo-chip.proximo {
+        background: var(--color-amber-soft);
+        color: var(--color-amber);
+    }
+
+    .plazo-chip.vencido {
+        background: var(--color-critico-alto-soft);
+        color: var(--color-critico-alto);
+    }
+
+    .plazo-chip.urgente {
+        animation: pulso-urgente 1.6s infinite;
+    }
+
+@keyframes pulso-urgente {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.35);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0);
+    }
+}
+
+/* Tarjeta de selección de funcionario (asignación/reasignación) */
+.tarjeta-funcionario {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    border: 1.5px solid var(--color-gray);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+    .tarjeta-funcionario:hover {
+        border-color: var(--color-blue-medium);
+    }
+
+    .tarjeta-funcionario.seleccionado {
+        border-color: var(--color-gold);
+        background: var(--color-gold-soft);
+    }
+
+    .tarjeta-funcionario.no-disponible {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .tarjeta-funcionario .nombre {
+        font-weight: 600;
+        font-size: 13.5px;
+    }
+
+    .tarjeta-funcionario .carga-badge {
+        margin-left: auto;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--color-ink-muted);
+        background: var(--color-gray-soft);
+        border-radius: var(--radius-pill);
+        padding: 2px 9px;
+    }
+
+/* Banner informativo */
+.banner-info {
+    display: flex;
+    gap: var(--space-2);
+    background: #eef2f9;
+    border: 1px solid #d7deea;
+    border-radius: var(--radius-sm);
+    padding: var(--space-3) var(--space-4);
+    font-size: 12.5px;
+    color: var(--color-blue);
+    line-height: 1.5;
+}
+
+    .banner-info svg {
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+/* ==========================================================================
+   6. FORMULARIOS Y FILTROS
+   ========================================================================== */
+.field {
+    margin-bottom: var(--space-4);
+}
+
+    .field label {
+        display: block;
+        font-size: var(--fs-small);
+        font-weight: 600;
+        color: var(--color-ink);
+        margin-bottom: var(--space-2);
+    }
+
+        .field label .req {
+            color: var(--color-danger);
+            margin-left: 2px;
+        }
+
+        .field label .opt {
+            color: var(--color-ink-muted);
+            font-weight: 400;
+            font-size: 11.5px;
+            margin-left: 6px;
+        }
+
+    .field .help {
+        font-size: 11.5px;
+        color: var(--color-ink-muted);
+        margin-top: 5px;
+    }
+
+    .field .error-msg {
+        font-size: 11.5px;
+        color: var(--color-danger);
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+input[type='text'],
+input[type='email'],
+input[type='tel'],
+input[type='date'],
+input[type='number'],
+select,
+textarea {
+    width: 100%;
+    border: 1px solid var(--color-gray);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--color-ink);
+    background: var(--color-white);
+    transition: border-color var(--transition), outline var(--transition);
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+    input::placeholder, textarea::placeholder {
+        color: #a7adba;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: 2px solid var(--color-gold);
+        outline-offset: 1px;
+        border-color: var(--color-gold);
+    }
+
+    input:disabled, select:disabled, textarea:disabled {
+        background: var(--color-gray-soft);
+        color: var(--color-ink-muted);
+        cursor: not-allowed;
+    }
+
+.field.error input, .field.error select, .field.error textarea {
+    border-color: var(--color-danger);
+    background: var(--color-danger-soft);
+}
+
+.row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.row3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-4);
+}
+
+/* Toggle Sí/No */
+.toggle-group {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.toggle-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--color-gray);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+    background: var(--color-white);
+    transition: all var(--transition);
+}
+
+    .toggle-btn.selected.si {
+        border-color: var(--color-danger);
+        color: var(--color-danger);
+        background: var(--color-danger-soft);
+    }
+
+    .toggle-btn.selected.no {
+        border-color: var(--color-ok);
+        color: var(--color-ok);
+        background: var(--color-ok-soft);
+    }
+
+.conditional-box {
+    margin-top: var(--space-3);
+    padding: var(--space-4);
+    background: #fafbfd;
+    border: 1px dashed var(--color-gray);
+    border-radius: var(--radius-sm);
+}
+
+/* Barra de filtros (dashboard, reportes, listados internos) */
+.filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-4);
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-5);
+}
+
+    .filters-bar .field {
+        margin-bottom: 0;
+        min-width: 160px;
+        flex: 1;
+    }
+
+.filters-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* Botones genéricos, compartidos por el portal interno y el formulario público */
+.btn-primary {
+    background: var(--color-gold);
+    color: var(--color-navy);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 26px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: background var(--transition);
+}
+
+    .btn-primary:hover {
+        background: #c19f57;
+    }
+
+    .btn-primary:disabled {
+        background: var(--color-gray);
+        color: var(--color-ink-muted);
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+.btn-secondary {
+    background: var(--color-white);
+    border: 1.5px solid var(--color-gray);
+    color: var(--color-ink);
+    border-radius: var(--radius-sm);
+    padding: 11px 22px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color var(--transition);
+}
+
+    .btn-secondary:hover {
+        border-color: var(--color-blue-medium);
+        color: var(--color-blue-medium);
+    }
+
+.btn-danger {
+    background: var(--color-danger);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 22px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   7. TABLAS DE DATOS Y LISTAS
+   ========================================================================== */
+.denuncias-table-wrap {
+    overflow-x: auto;
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+table.denuncias-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 640px;
+}
+
+.denuncias-table thead th {
+    background: var(--color-navy);
+    color: var(--color-white);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    padding: 12px 14px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.denuncias-table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-gray-soft);
+    color: var(--color-ink);
+}
+
+.denuncias-table tbody tr {
+    transition: background var(--transition);
+}
+
+    .denuncias-table tbody tr:hover {
+        background: var(--color-gold-soft);
+    }
+
+    .denuncias-table tbody tr.fila-vencida {
+        background: var(--color-danger-soft);
+    }
+
+    .denuncias-table tbody tr.fila-critica {
+        border-left: 4px solid var(--color-critico-alto);
+    }
+
+    .denuncias-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+/* Vista de tarjetas para móvil (reemplaza la tabla) */
+.lista-tarjetas {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.tarjeta-denuncia {
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-4);
+}
+
+.tarjeta-denuncia-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+}
+
+.tarjeta-denuncia .numero {
+    font-weight: 700;
+    color: var(--color-navy);
+    font-size: 13.5px;
+}
+
+.tarjeta-denuncia dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px var(--space-3);
+    font-size: 12.5px;
+    margin: 0;
+}
+
+.tarjeta-denuncia dt {
+    color: var(--color-ink-muted);
+}
+
+.tarjeta-denuncia dd {
+    margin: 0;
+}
+
+/* ==========================================================================
+   8. MODALES, PANELES LATERALES Y TOASTS
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 26, 83, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    z-index: var(--z-modal);
+}
+
+.modal-card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    max-width: 520px;
+    width: 100%;
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-ink-muted);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+}
+
+/* Panel lateral deslizante (asignación, reasignación, detalle) */
+.panel-lateral {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 380px;
+    max-width: 92vw;
+    background: var(--color-white);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    transition: transform var(--transition);
+    z-index: var(--z-panel);
+    display: flex;
+    flex-direction: column;
+}
+
+    .panel-lateral.visible {
+        transform: translateX(0);
+    }
+
+.panel-lateral-header {
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-gray-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-lateral-body {
+    padding: var(--space-5);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.panel-lateral-footer {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-gray-soft);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+}
+
+/* Notificación tipo toast */
+.toast {
+    position: fixed;
+    bottom: var(--space-5);
+    right: var(--space-5);
+    background: var(--color-navy);
+    color: var(--color-white);
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(16px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    z-index: var(--z-toast);
+    max-width: 360px;
+}
+
+    .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .toast.exito {
+        border-left: 4px solid var(--color-ok);
+    }
+
+    .toast.error {
+        border-left: 4px solid var(--color-critico-alto);
+    }
+
+    .toast.aviso {
+        border-left: 4px solid var(--color-gold);
+    }
+
+/* ==========================================================================
+   9. FOOTER INSTITUCIONAL (portal interno)
+   ========================================================================== */
+.footer-institucional {
+    background: var(--color-navy);
+    color: var(--color-ink-invertido);
+    padding: var(--space-4) var(--space-6);
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    font-size: 11.5px;
+}
+
+    .footer-institucional .footer-logos {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        flex-shrink: 0;
+    }
+
+        .footer-institucional .footer-logos img {
+            height: 32px;
+            width: auto;
+            max-width: 140px;
+            object-fit: contain;
+        }
+
+    .footer-institucional .footer-texto {
+        text-align: right;
+    }
+
+    .footer-institucional a {
+        color: var(--color-gold);
+    }
+
+/* ==========================================================================
+   10. FORMULARIO PÚBLICO DE DENUNCIA (sin autenticación)
+   ========================================================================== */
+.topbar-publica {
+    background: var(--color-navy);
+    color: var(--color-white);
+    padding: 14px 28px;
+    border-bottom: 3px solid var(--color-gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.brand-text .eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 1.6px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.brand-text .brand-word {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--color-white);
+    line-height: 1.2;
+}
+
+.brand-text .sub {
+    font-size: 12px;
+    color: var(--color-ink-invertido);
+    margin-top: 1px;
+}
+
+.public-chip {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--color-ink-invertido);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+}
+
+.hero-publico {
+    background: linear-gradient(135deg, var(--color-navy), var(--color-blue));
+    color: var(--color-white);
+    padding: var(--space-6) var(--space-5) var(--space-8);
+    text-align: center;
+}
+
+    .hero-publico .eyebrow {
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--color-gold);
+        font-weight: 700;
+    }
+
+    .hero-publico h1 {
+        color: var(--color-white);
+        font-size: 25px;
+        margin: var(--space-2) 0;
+    }
+
+    .hero-publico p {
+        font-size: 13.5px;
+        color: var(--color-ink-invertido);
+        max-width: 580px;
+        margin: 0 auto;
+    }
+
+/* Indicador de pasos del formulario */
+.progress-wrap {
+    max-width: 820px;
+    margin: calc(-1 * var(--space-6)) auto 0;
+    padding: 0 var(--space-5);
+}
+
+.progress-track {
+    background: var(--color-white);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    padding: var(--space-4);
+    justify-content: space-between;
+    gap: var(--space-1);
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 1;
+}
+
+.step-dot {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: var(--color-gray-soft);
+    color: var(--color-ink-muted);
+    border: 2px solid var(--color-gray);
+}
+
+.step.done .step-dot {
+    background: var(--color-ok-soft);
+    border-color: var(--color-ok);
+    color: var(--color-ok);
+}
+
+.step.active .step-dot {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-navy);
+}
+
+.step-label {
+    font-size: 10px;
+    color: var(--color-ink-muted);
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.step.active .step-label {
+    color: var(--color-navy);
+}
+
+.main-publico {
+    max-width: 820px;
+    margin: var(--space-6) auto 60px;
+    padding: 0 var(--space-5);
+}
+
+.section-divider-label {
+    font-size: 10.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    font-weight: 700;
+    margin: var(--space-6) 0 var(--space-3) 2px;
+}
+
+/* Bloque repetible de producto (HU-004) */
+.producto-block {
+    border: 1px solid var(--color-gray-soft);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+    overflow: hidden;
+}
+
+.producto-block-head {
+    background: #fafbfd;
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-gray-soft);
+}
+
+    .producto-block-head .tag {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--color-navy);
+        background: var(--color-gold-soft);
+        padding: 3px 10px;
+        border-radius: var(--radius-pill);
+    }
+
+    .producto-block-head .remove {
+        font-size: 12px;
+        color: var(--color-danger);
+        cursor: pointer;
+        font-weight: 600;
+        border: none;
+        background: none;
+    }
+
+.producto-block-body {
+    padding: var(--space-4);
+}
+
+.subsection-lbl {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--color-ink-muted);
+    font-weight: 700;
+    margin: var(--space-4) 0 var(--space-3);
+    display: block;
+}
+
+    .subsection-lbl:first-child {
+        margin-top: 0;
+    }
+
+.add-producto-btn {
+    width: 100%;
+    border: 2px dashed var(--color-gray);
+    background: #fafbfd;
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    color: var(--color-blue);
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    transition: border-color var(--transition), color var(--transition);
+}
+
+    .add-producto-btn:hover {
+        border-color: var(--color-gold);
+        color: var(--color-navy);
+    }
+
+/* Lista de motivos de denuncia */
+.motivo-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.motivo-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: 9px 12px;
+    border: 1.5px solid var(--color-gray);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+    .motivo-check-item.selected {
+        border-color: var(--color-navy);
+        background: #eef2f9;
+    }
+
+.motivo-check-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 2px solid var(--color-gray);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.motivo-check-item.selected .motivo-check-box {
+    border-color: var(--color-navy);
+    background: var(--color-navy);
+    color: var(--color-white);
+}
+
+.motivo-check-text {
+    font-size: 12.5px;
+    color: var(--color-ink);
+    line-height: 1.4;
+}
+
+/* Evidencias adjuntas (HU-003) */
+.dropzone {
+    border: 2px dashed var(--color-gray);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    text-align: center;
+    background: #fafbfd;
+}
+
+    .dropzone svg {
+        color: var(--color-ink-muted);
+        margin-bottom: var(--space-2);
+    }
+
+    .dropzone .txt {
+        font-size: 13px;
+        color: var(--color-ink-muted);
+    }
+
+        .dropzone .txt strong {
+            color: var(--color-blue);
+        }
+
+    .dropzone .formats {
+        font-size: 11px;
+        color: var(--color-ink-muted);
+        margin-top: 4px;
+    }
+
+.evidencia-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 11px 14px;
+    border: 1px solid var(--color-gray-soft);
+    border-radius: var(--radius-sm);
+    background: #fafbfd;
+    margin-top: var(--space-3);
+}
+
+.evidencia-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .evidencia-icon.foto {
+        background: #e7edf7;
+        color: var(--color-blue);
+    }
+
+    .evidencia-icon.doc {
+        background: var(--color-gold-soft);
+        color: var(--color-amber);
+    }
+
+.evidencia-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-ink);
+}
+
+.evidencia-meta {
+    font-size: 11px;
+    color: var(--color-ink-muted);
+    margin-top: 2px;
+}
+
+    .evidencia-meta .tipo-tag {
+        background: var(--color-gray-soft);
+        color: var(--color-ink-muted);
+        padding: 1px 7px;
+        border-radius: var(--radius-pill);
+        font-weight: 700;
+        font-size: 10px;
+        margin-right: 6px;
+    }
+
+.evidencia-remove {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--color-danger);
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+    background: none;
+}
+
+.evidencia-fecha-row {
+    margin-top: var(--space-4);
+}
+
+/* Selección del tipo de trámite (anónima / confidencial) */
+.tramite-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.tramite-card {
+    border: 2px solid var(--color-gray);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    cursor: pointer;
+    position: relative;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+    .tramite-card h3 {
+        font-size: 14.5px;
+        margin: 0 0 6px;
+        color: var(--color-ink);
+        font-family: var(--font-body);
+        font-weight: 700;
+    }
+
+    .tramite-card p {
+        font-size: 12px;
+        color: var(--color-ink-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .tramite-card.selected {
+        border-color: var(--color-gold);
+        background: var(--color-gold-soft);
+    }
+
+    .tramite-card .radio-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid var(--color-gray);
+        position: absolute;
+        top: 14px;
+        right: 14px;
+    }
+
+    .tramite-card.selected .radio-dot {
+        border-color: var(--color-gold);
+        background: radial-gradient(circle, var(--color-navy) 0 40%, var(--color-gold) 41% 100%);
+    }
+
+.form-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-2);
+}
+
+.footer-publico {
+    background: var(--color-navy);
+    color: var(--color-ink-invertido);
+    font-size: 11.5px;
+    text-align: center;
+    padding: var(--space-4);
+    margin-top: var(--space-5);
+}
+
+/* ==========================================================================
+   11. MEDIA QUERIES Y ADAPTABILIDAD MÓVIL (RNF-014)
+   ========================================================================== */
+@media (max-width: 900px) {
+    .btn-hamburger {
+        display: inline-flex;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 260px;
+        transform: translateX(-100%);
+        transition: transform var(--transition);
+    }
+
+        .sidebar.abierto {
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 260px;
+        }
+    /* en móvil el colapso no aplica, se usa off-canvas */
+
+    .layout-split {
+        grid-template-columns: 1fr;
+    }
+
+    .content-wrap {
+        padding: var(--space-4);
+    }
+
+    .topbar-interna {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .tramite-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .row2, .row3 {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .filters-bar .field {
+            min-width: 0;
+        }
+
+    /* La tabla de denuncias se reemplaza por tarjetas apiladas */
+    .denuncias-table-wrap {
+        display: none;
+    }
+
+    .lista-tarjetas {
+        display: flex;
+    }
+
+    .panel-lateral {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .footer-institucional {
+        flex-direction: column;
+        text-align: center;
+    }
+
+        .footer-institucional .footer-texto {
+            text-align: center;
+        }
+
+    .hero-publico {
+        padding: var(--space-5) var(--space-4) var(--space-6);
+    }
+
+    .step-label {
+        display: none;
+    }
+    /* en pantallas muy pequeñas solo se ven los círculos de paso */
+}

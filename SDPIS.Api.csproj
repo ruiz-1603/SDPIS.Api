@@ -15,12 +15,12 @@
     <Folder Include="Frontend\src\assets\" />
     <Folder Include="Frontend\src\components\" />
     <Folder Include="Frontend\src\utils\" />
-    <Folder Include="Frontend\src\styles\" />
     <Folder Include="Frontend\src\services\" />
     <Folder Include="Frontend\src\pages\institucional\" />
     <Folder Include="Frontend\src\pages\publico\" />
     <Folder Include="Models\Entities\" />
     <Folder Include="Models\DTOs\" />
+    <Folder Include="Scripts\" />
     <Folder Include="Repositories\" />
     <Folder Include="Services\" />
   </ItemGroup>
