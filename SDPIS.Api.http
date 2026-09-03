@@ -1,0 +1,6 @@
+@SDPIS.Api_HostAddress = http://localhost:5290
+
+GET {{SDPIS.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

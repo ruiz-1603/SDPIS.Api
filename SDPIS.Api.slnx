@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../SDPIS.Test/SDPIS.Test.csproj" />
+  <Project Path="SDPIS.Api.csproj" />
+</Solution>
