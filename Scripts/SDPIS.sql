@@ -254,6 +254,19 @@ CREATE INDEX IDX_DENUNCIA_DENUNCIANTE_DENUNCIANTE_ID ON denuncia_denunciante(den
 
 -- atributos propios: 2
 
+- =====================================================
+-- CÓDIGO DE SEGUIMIENTO PÚBLICO (satélite 1:1 de denuncia)
+-- =====================================================
+CREATE TABLE denuncia_seguimiento (
+  denuncia_id        NUMBER PRIMARY KEY,
+  codigo_seguimiento VARCHAR2(20) NOT NULL,
+  CONSTRAINT FK_DEN_SEG_DENUNCIA FOREIGN KEY (denuncia_id) REFERENCES denuncia(id_denuncia),
+  CONSTRAINT UQ_DENUNCIA_SEG_CODIGO UNIQUE (codigo_seguimiento)
+);
+-- atributos propios: 1
+-- denuncia_id es PK+FK -> ya indexado por la PK, no necesita índice B04 aparte
+-- (mismo criterio que ya aplicaron en denuncia_ubicacion, denuncia_hecho, etc.)
+
 -- =====================================================
 -- PRODUCTO(S) DENUNCIADO(S) -- ahora 1:N real con denuncia
 -- =====================================================
@@ -478,9 +491,10 @@ END trg_area_ai;
 --  - persistir todo en una unica transaccion atomica con rollback (HU-005)
 --  - proteger la anonimidad del denunciante como invariante estructural
 CREATE OR REPLACE PROCEDURE sp_registrar_denuncia (
-  p_denuncia_json IN  CLOB,
-  p_id_denuncia   OUT NUMBER,
-  p_consecutivo   OUT VARCHAR2
+    p_denuncia_json      IN  CLOB,
+  p_codigo_seguimiento IN  VARCHAR2,
+  p_id_denuncia        OUT NUMBER,
+  p_consecutivo        OUT VARCHAR2
 )
 IS
   -- datos del hecho
@@ -641,6 +655,8 @@ BEGIN
   ) VALUES (
     p_id_denuncia, v_canton_id, v_distrito_id, v_area_id, v_direccion_exacta
   );
+    INSERT INTO denuncia_seguimiento (denuncia_id, codigo_seguimiento)
+  VALUES (p_id_denuncia, p_codigo_seguimiento);
 
   ----------------------------------------------------------------
   -- 6. denunciante (solo si es confidencial)
