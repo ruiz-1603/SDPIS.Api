@@ -1,13 +1,18 @@
+using SDPIS.Api.Middleware;
+using SDPIS.Api.Repositories;
+using SDPIS.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IDenunciaRepository, DenunciaRepository>();
+builder.Services.AddScoped<IDenunciaService, DenunciaService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -15,9 +20,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<ManejadorDeErroresMiddleware>();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

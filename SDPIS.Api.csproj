@@ -24,10 +24,7 @@
     <Folder Include="Frontend\src\pages\institucional\" />
     <Folder Include="Frontend\src\pages\publico\" />
     <Folder Include="Models\Entities\" />
-    <Folder Include="Models\DTOs\" />
     <Folder Include="Scripts\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

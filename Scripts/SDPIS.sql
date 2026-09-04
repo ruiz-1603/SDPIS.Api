@@ -451,33 +451,6 @@ ALTER TABLE denuncia DROP CONSTRAINT UQ_DENUNCIA_AREA_SEC;
 ALTER TABLE denuncia
   ADD CONSTRAINT UQ_DENUNCIA_AREA_SEC UNIQUE (area_actual_id, anio_creacion, numero_secuencial);
 
--- Retorna 'S' si el texto no esta vacio, no es solo puntuacion/espacios
--- y tiene al menos p_min_longitud caracteres.
-CREATE OR REPLACE FUNCTION fn_texto_valido (
-  p_texto        IN VARCHAR2,
-  p_min_longitud IN NUMBER DEFAULT 3
-) RETURN CHAR
-IS
-  v_texto VARCHAR2(4000);
-BEGIN
-  v_texto := TRIM(p_texto);
-
-  IF v_texto IS NULL THEN
-    RETURN 'N';
-  END IF;
-
-  IF LENGTH(v_texto) < p_min_longitud THEN
-    RETURN 'N';
-  END IF;
-
-  -- exige que haya al menos un caracter alfanumerico (descarta "..." o "   ")
-  IF NOT REGEXP_LIKE(v_texto, '[[:alnum:]]') THEN
-    RETURN 'N';
-  END IF;
-
-  RETURN 'S';
-END fn_texto_valido;
-/
 
 CREATE TABLE contador_denuncia_area (
   area_id       NUMBER NOT NULL,
@@ -498,6 +471,12 @@ BEGIN
 END trg_area_ai;
 /
 
+-- Recibe una denuncia YA VALIDADA Y NORMALIZADA por el Backend (HU-002/HU-004).
+-- Solo hace lo que es exclusivo de la base de datos:
+--  - resolver el area (HU-009, lookup deterministico contra ubicacion_area)
+--  - generar el numero secuencial de forma segura ante concurrencia
+--  - persistir todo en una unica transaccion atomica con rollback (HU-005)
+--  - proteger la anonimidad del denunciante como invariante estructural
 CREATE OR REPLACE PROCEDURE sp_registrar_denuncia (
   p_denuncia_json IN  CLOB,
   p_id_denuncia   OUT NUMBER,
@@ -516,9 +495,8 @@ IS
   v_canton_id        canton.id_canton%TYPE;
   v_distrito_id      distrito.id_distrito%TYPE;
   v_direccion_exacta denuncia_ubicacion.direccion_exacta%TYPE;
-  v_tiene_distrito   canton.tiene_distrito%TYPE;
 
-  -- privacidad / denunciante
+  -- privacidad / denunciante (ya validados por Backend)
   v_es_anonima         denuncia_denunciante.es_anonima%TYPE;
   v_den_nombre         denunciante.nombre%TYPE;
   v_den_numero_id      denunciante.numero_identificacion%TYPE;
@@ -530,24 +508,20 @@ IS
   -- area / consecutivo
   v_area_id           area.id_area%TYPE;
   v_codigo_area       area.codigo_area%TYPE;
-  v_anio              NUMBER(4);
   v_numero_secuencial denuncia.numero_secuencial%TYPE;
 
-  -- productos
   v_id_detalle_producto detalle_producto.id_detalle_producto%TYPE;
-  v_num_productos        NUMBER := 0;
-  v_num_motivos           NUMBER := 0;
 
 BEGIN
   ----------------------------------------------------------------
-  -- 0. validacion basica del payload
+  -- 0. guarda tecnica de la interfaz (no es validacion de negocio)
   ----------------------------------------------------------------
   IF p_denuncia_json IS NULL OR NOT p_denuncia_json IS JSON THEN
     RAISE_APPLICATION_ERROR(-20000, 'El payload de la denuncia no es un JSON valido.');
   END IF;
 
   ----------------------------------------------------------------
-  -- 1. leer campos escalares del JSON
+  -- 1. leer campos escalares del JSON (ya validados/normalizados por Backend)
   ----------------------------------------------------------------
   SELECT jt.denunciado_otra_institucion,
          jt.detalle_otra_institucion,
@@ -600,68 +574,21 @@ BEGIN
       )
     ) jt;
 
-  -- normalizar blancos a NULL (regla general HU-002)
-  v_detalle_otra_institucion := NULLIF(TRIM(v_detalle_otra_institucion), '');
-  v_detalle_previo_minsalud  := NULLIF(TRIM(v_detalle_previo_minsalud), '');
-  v_direccion_exacta         := NULLIF(TRIM(v_direccion_exacta), '');
-  v_den_correo               := NULLIF(TRIM(v_den_correo), '');
-  v_den_telefono              := NULLIF(TRIM(v_den_telefono), '');
-  v_den_direccion             := NULLIF(TRIM(v_den_direccion), '');
-
   ----------------------------------------------------------------
-  -- 2. validaciones de campos obligatorios (HU-002)
+  -- 2. invariante de privacidad (no es validacion de formato: es una
+  --    garantia estructural de que "anonima" nunca guarda datos personales,
+  --    sin depender de que el backend lo haga bien siempre)
   ----------------------------------------------------------------
-  IF fn_texto_valido(v_nombre_establecimiento) = 'N' THEN
-    RAISE_APPLICATION_ERROR(-20001, 'El nombre del establecimiento o persona a denunciar es obligatorio.');
-  END IF;
-
-  IF fn_texto_valido(v_descripcion_hecho, 10) = 'N' THEN
-    RAISE_APPLICATION_ERROR(-20002, 'La descripcion cronologica de la problematica es obligatoria.');
-  END IF;
-
-  -- PUNTO 1: se agrega "IS NULL OR" para que un campo ausente
-  -- se rechace explicitamente, en vez de colar silenciosamente al ELSE
-  -- (rama confidencial) mas abajo.
-  IF v_es_anonima IS NULL OR v_es_anonima NOT IN ('S','N') THEN
-    RAISE_APPLICATION_ERROR(-20003, 'Debe indicar si la denuncia es anonima o confidencial.');
-  END IF;
-
   IF v_es_anonima = 'S' THEN
-    -- anonima: no se piden ni se guardan datos del denunciante
     v_den_nombre    := NULL;
     v_den_numero_id := NULL;
     v_den_correo    := NULL;
     v_den_telefono  := NULL;
     v_den_direccion := NULL;
-  ELSE
-    -- confidencial: nombre y numero de identificacion son obligatorios
-    IF fn_texto_valido(v_den_nombre) = 'N' THEN
-      RAISE_APPLICATION_ERROR(-20004, 'El nombre del denunciante es obligatorio en denuncia confidencial.');
-    END IF;
-    IF fn_texto_valido(v_den_numero_id) = 'N' THEN
-      RAISE_APPLICATION_ERROR(-20005, 'El numero de identificacion del denunciante es obligatorio en denuncia confidencial.');
-    END IF;
   END IF;
 
   ----------------------------------------------------------------
-  -- 3. resolver canton / distrito
-  ----------------------------------------------------------------
-  BEGIN
-    SELECT tiene_distrito INTO v_tiene_distrito
-    FROM canton WHERE id_canton = v_canton_id;
-  EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-      RAISE_APPLICATION_ERROR(-20006, 'El canton indicado no existe.');
-  END;
-
-  IF v_tiene_distrito = 'S' AND v_distrito_id IS NULL THEN
-    RAISE_APPLICATION_ERROR(-20007, 'Debe indicar el distrito para el canton seleccionado.');
-  ELSIF v_tiene_distrito = 'N' THEN
-    v_distrito_id := NULL; -- este canton no maneja distrito
-  END IF;
-
-  ----------------------------------------------------------------
-  -- 4. resolver area (HU-009: busqueda deterministica, siempre hay match)
+  -- 3. resolver area (HU-009: busqueda deterministica, siempre hay match)
   ----------------------------------------------------------------
   BEGIN
     SELECT area_id INTO v_area_id
@@ -677,32 +604,26 @@ BEGIN
   SELECT codigo_area INTO v_codigo_area FROM area WHERE id_area = v_area_id;
 
   ----------------------------------------------------------------
-  -- 5. numero secuencial por area Y ANIO (PUNTO 3: reinicio anual)
+  -- 4. numero secuencial por area (bloqueo por fila -> sin choques)
   ----------------------------------------------------------------
-  v_anio := TO_NUMBER(TO_CHAR(SYSDATE, 'YYYY'));
-
-  -- crea la fila (area, anio) si es la primera denuncia de esa area en el anio
-  BEGIN
-    INSERT INTO contador_denuncia_area (area_id, anio, ultimo_numero)
-    VALUES (v_area_id, v_anio, 0);
-  EXCEPTION
-    WHEN DUP_VAL_ON_INDEX THEN
-      NULL; -- ya existia, seguimos al UPDATE
-  END;
-
   UPDATE contador_denuncia_area
      SET ultimo_numero = ultimo_numero + 1
-   WHERE area_id = v_area_id AND anio = v_anio
+   WHERE area_id = v_area_id
   RETURNING ultimo_numero INTO v_numero_secuencial;
 
-  p_consecutivo := v_codigo_area || '-' || TO_CHAR(v_anio) || '-' ||
+  IF SQL%ROWCOUNT = 0 THEN
+    INSERT INTO contador_denuncia_area (area_id, ultimo_numero) VALUES (v_area_id, 1);
+    v_numero_secuencial := 1;
+  END IF;
+
+  p_consecutivo := v_codigo_area || '-' || TO_CHAR(SYSDATE, 'YYYY') || '-' ||
                    LPAD(v_numero_secuencial, 6, '0');
 
   ----------------------------------------------------------------
-  -- 6. denuncia (id, area, anio, secuencial, consecutivo, estado por DEFAULT)
+  -- 5. denuncia (id, area, secuencial, consecutivo, estado por DEFAULT)
   ----------------------------------------------------------------
-  INSERT INTO denuncia (consecutivo, numero_secuencial, anio_creacion, area_actual_id)
-  VALUES (p_consecutivo, v_numero_secuencial, v_anio, v_area_id)
+  INSERT INTO denuncia (consecutivo, numero_secuencial, area_actual_id)
+  VALUES (p_consecutivo, v_numero_secuencial, v_area_id)
   RETURNING id_denuncia INTO p_id_denuncia;
 
   INSERT INTO denuncia_hecho (
@@ -722,7 +643,7 @@ BEGIN
   );
 
   ----------------------------------------------------------------
-  -- 7. denunciante (solo si es confidencial)
+  -- 6. denunciante (solo si es confidencial)
   ----------------------------------------------------------------
   IF v_es_anonima = 'N' THEN
     INSERT INTO denunciante (nombre, numero_identificacion, correo, telefono)
@@ -734,17 +655,16 @@ BEGIN
   VALUES (p_id_denuncia, v_denunciante_id, v_es_anonima, v_den_direccion);
 
   ----------------------------------------------------------------
-  -- 8. productos (uno o varios) y sus motivos
+  -- 7. productos (uno o varios) y sus motivos
   ----------------------------------------------------------------
   FOR prod IN (
-    SELECT jt.rn, jt.tipo_producto_id, jt.nombre_producto_texto,
+    SELECT jt.tipo_producto_id, jt.nombre_producto_texto,
            jt.registro_sanitario_ingresado, jt.descripcion_producto,
            jt.marca_ingresada, jt.numero_lote, jt.fabricante_ingresado,
            jt.pais_origen, jt.presentacion, jt.fecha_compra_txt, jt.motivos_json
     FROM JSON_TABLE(
       p_denuncia_json, '$.productos[*]'
       COLUMNS (
-        rn                            FOR ORDINALITY,
         tipo_producto_id              NUMBER        PATH '$.tipo_producto_id',
         nombre_producto_texto         VARCHAR2(200) PATH '$.nombre_producto_texto',
         registro_sanitario_ingresado  VARCHAR2(30)  PATH '$.registro_sanitario_ingresado',
@@ -760,67 +680,36 @@ BEGIN
     ) jt
   )
   LOOP
-    v_num_productos := v_num_productos + 1;
-
-    IF fn_texto_valido(prod.nombre_producto_texto) = 'N' THEN
-      RAISE_APPLICATION_ERROR(-20009, 'El nombre del producto #' || prod.rn || ' es obligatorio.');
-    END IF;
-    IF fn_texto_valido(prod.descripcion_producto) = 'N' THEN
-      RAISE_APPLICATION_ERROR(-20010, 'La descripcion del producto #' || prod.rn || ' es obligatoria.');
-    END IF;
-
-    -- PUNTO 2: tipo_producto_id es obligatorio (el formulario lo entrega
-    -- como catalogo/select). Se valida aqui ademas del NOT NULL de tabla
-    -- para dar un mensaje legible en vez de un ORA-01400 generico.
-    IF prod.tipo_producto_id IS NULL THEN
-      RAISE_APPLICATION_ERROR(-20013, 'El tipo de producto del producto #' || prod.rn || ' es obligatorio.');
-    END IF;
-
     INSERT INTO detalle_producto (
       denuncia_id, tipo_producto_id, nombre_producto_texto,
       registro_sanitario_ingresado, descripcion_producto, marca_ingresada
     ) VALUES (
       p_id_denuncia, prod.tipo_producto_id, prod.nombre_producto_texto,
-      NULLIF(TRIM(prod.registro_sanitario_ingresado), ''),
-      prod.descripcion_producto,
-      NULLIF(TRIM(prod.marca_ingresada), '')
+      prod.registro_sanitario_ingresado, prod.descripcion_producto, prod.marca_ingresada
     ) RETURNING id_detalle_producto INTO v_id_detalle_producto;
 
     INSERT INTO detalle_producto_compra (
       id_detalle_producto, numero_lote, fabricante_ingresado,
       pais_origen, presentacion, fecha_compra
     ) VALUES (
-      v_id_detalle_producto,
-      NULLIF(TRIM(prod.numero_lote), ''),
-      NULLIF(TRIM(prod.fabricante_ingresado), ''),
-      NULLIF(TRIM(prod.pais_origen), ''),
-      NULLIF(TRIM(prod.presentacion), ''),
+      v_id_detalle_producto, prod.numero_lote, prod.fabricante_ingresado,
+      prod.pais_origen, prod.presentacion,
       CASE WHEN prod.fecha_compra_txt IS NOT NULL
            THEN TO_DATE(prod.fecha_compra_txt, 'YYYY-MM-DD') END
     );
 
-    v_num_motivos := 0;
     FOR mot IN (
       SELECT VALUE AS id_motivo
       FROM JSON_TABLE(prod.motivos_json, '$[*]' COLUMNS (VALUE NUMBER PATH '$'))
     )
     LOOP
-      v_num_motivos := v_num_motivos + 1;
       INSERT INTO detalle_producto_motivo (id_detalle_producto, id_motivo)
       VALUES (v_id_detalle_producto, mot.id_motivo);
     END LOOP;
-
-    IF v_num_motivos = 0 THEN
-      RAISE_APPLICATION_ERROR(-20011, 'El producto #' || prod.rn || ' debe tener al menos un motivo de denuncia.');
-    END IF;
   END LOOP;
 
-  IF v_num_productos = 0 THEN
-    RAISE_APPLICATION_ERROR(-20012, 'La denuncia debe incluir al menos un producto.');
-  END IF;
-
   ----------------------------------------------------------------
-  -- 9. bitacora (evento automatico, sin funcionario detras)
+  -- 8. bitacora (evento automatico, sin funcionario detras)
   ----------------------------------------------------------------
   INSERT INTO bitacora (denuncia_id, funcionario_id, area_origen_id, tipo_registro, contenido)
   VALUES (p_id_denuncia, NULL, v_area_id, 'accion_obligatoria',
@@ -834,4 +723,3 @@ EXCEPTION
     RAISE;
 END sp_registrar_denuncia;
 /
-
