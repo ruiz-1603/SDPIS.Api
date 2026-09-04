@@ -2,5 +2,6 @@
 
 public interface IDenunciaRepository
 {
-    Task<(long IdDenuncia, string Consecutivo)> RegistrarDenunciaAsync(string denunciaJson, CancellationToken ct);
+    Task<DenunciaRegistroResultado> RegistrarDenunciaAsync(
+        string denunciaJson, string codigoSeguimiento, CancellationToken ct);
 }

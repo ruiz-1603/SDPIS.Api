@@ -11,9 +11,9 @@ public class DenunciasController(IDenunciaService denunciaService) : ControllerB
     // POST /api/denuncias  -- HU-002 + HU-004 + HU-005
     [HttpPost]
     public async Task<ActionResult<DenunciaRegistradaResponse>> Registrar(
-        [FromBody] CrearDenunciaRequest request, CancellationToken ct)
+    [FromBody] CrearDenunciaRequest request, CancellationToken ct)
     {
         var resultado = await denunciaService.RegistrarAsync(request, ct);
-        return CreatedAtAction(nameof(Registrar), new { id = resultado.IdDenuncia }, resultado);
+        return StatusCode(StatusCodes.Status201Created, resultado);
     }
 }
