@@ -221,7 +221,7 @@ CREATE TABLE denuncia_hecho (
   detalle_previo_minsalud          VARCHAR2(500),
   CONSTRAINT FK_DEN_HECHO_DENUNCIA FOREIGN KEY (denuncia_id) REFERENCES denuncia(id_denuncia)
 );
--- atributos propios: 6 (en el límite) -- NUEVA
+-- atributos propios: 6 (en el límite)
 
 CREATE TABLE denuncia_ubicacion (
   denuncia_id          NUMBER PRIMARY KEY,
@@ -254,7 +254,7 @@ CREATE INDEX IDX_DENUNCIA_DENUNCIANTE_DENUNCIANTE_ID ON denuncia_denunciante(den
 
 -- atributos propios: 2
 
-- =====================================================
+-- =====================================================
 -- CÓDIGO DE SEGUIMIENTO PÚBLICO (satélite 1:1 de denuncia)
 -- =====================================================
 CREATE TABLE denuncia_seguimiento (
@@ -301,7 +301,7 @@ CREATE TABLE detalle_producto_compra (
   fecha_compra         DATE,
   CONSTRAINT FK_DETPRODCOMPRA_DETPROD FOREIGN KEY (id_detalle_producto) REFERENCES detalle_producto(id_detalle_producto)
 );
--- atributos propios: 5 -- NUEVA (datos secundarios del Apartado IV, 1:1 con detalle_producto)
+-- atributos propios: 5 (datos secundarios del Apartado IV, 1:1 con detalle_producto)
 
 CREATE TABLE detalle_producto_motivo (
   id_detalle_producto NUMBER NOT NULL,
@@ -313,7 +313,7 @@ CREATE TABLE detalle_producto_motivo (
 -- Índices (B04 -- obligatorios en toda columna FK):
 CREATE INDEX IDX_DETALLE_PRODUCTO_MOTIVO_ID_MOTIVO ON detalle_producto_motivo(id_motivo);
 
--- atributos propios: 0 -- NUEVA, reemplaza a denuncia_motivo (motivos POR PRODUCTO)
+-- atributos propios: 0 (reemplaza a denuncia_motivo -- motivos POR PRODUCTO)
 
 -- =====================================================
 -- CRITICIDAD
@@ -445,6 +445,7 @@ ALTER TABLE bitacora MODIFY (funcionario_id NULL);
 -- consecutivo mas ancho: codigo_area (hasta 20) + '-' + anio (4) + '-' + secuencial (6)
 -- puede llegar a superar los 30 caracteres originales
 ALTER TABLE denuncia MODIFY (consecutivo VARCHAR2(60));
+
 -- =====================================================
 -- CAMBIOS DE ESQUEMA: tipo_producto obligatorio (punto 2)
 -- y consecutivo con reinicio anual (punto 3)
@@ -453,8 +454,9 @@ ALTER TABLE denuncia MODIFY (consecutivo VARCHAR2(60));
 -- Punto 2: tipo_producto_id pasa a ser obligatorio a nivel de tabla
 ALTER TABLE detalle_producto MODIFY (tipo_producto_id NOT NULL);
 
--- Punto 3a: el contador ahora es por (area_id, anio), no solo por area_id
-ALTER TABLE contador_denuncia_area ADD anio NUMBER(4);
+-- Punto 3a: el contador ahora es por (area_id, anio), no solo por area_id.
+-- La columna anio se define directamente en el CREATE TABLE de mas abajo,
+-- como parte de la PK compuesta (area_id, anio) -- no se necesita un ALTER aparte.
 
 -- Punto 3b: denuncia necesita el anio como parte de la clave de unicidad,
 -- porque el numero_secuencial ahora se repite entre anios distintos.
@@ -473,21 +475,23 @@ CREATE TABLE contador_denuncia_area (
   CONSTRAINT FK_CONTADOR_AREA FOREIGN KEY (area_id) REFERENCES area(id_area)
 );
 
--- cada vez que se crea un area, se le siembra su contador en 0
--- para que sp_registrar_denuncia nunca dependa de un INSERT concurrente
+-- cada vez que se crea un area, se le siembra su contador del anio en curso en 0
+-- para que sp_registrar_denuncia nunca dependa de un INSERT concurrente.
+-- anio es NOT NULL (parte de la PK compuesta), por eso debe incluirse aqui;
+-- los anios siguientes los crea el propio SP via su fallback (ROWCOUNT=0).
 CREATE OR REPLACE TRIGGER trg_area_ai
 AFTER INSERT ON area
 FOR EACH ROW
 BEGIN
-  INSERT INTO contador_denuncia_area (area_id, ultimo_numero)
-  VALUES (:NEW.id_area, 0);
+  INSERT INTO contador_denuncia_area (area_id, anio, ultimo_numero)
+  VALUES (:NEW.id_area, EXTRACT(YEAR FROM SYSDATE), 0);
 END trg_area_ai;
 /
 
 -- Recibe una denuncia YA VALIDADA Y NORMALIZADA por el Backend (HU-002/HU-004).
 -- Solo hace lo que es exclusivo de la base de datos:
 --  - resolver el area (HU-009, lookup deterministico contra ubicacion_area)
---  - generar el numero secuencial de forma segura ante concurrencia
+--  - generar el numero secuencial de forma segura ante concurrencia (con reinicio anual)
 --  - persistir todo en una unica transaccion atomica con rollback (HU-005)
 --  - proteger la anonimidad del denunciante como invariante estructural
 CREATE OR REPLACE PROCEDURE sp_registrar_denuncia (
@@ -523,6 +527,7 @@ IS
   v_area_id           area.id_area%TYPE;
   v_codigo_area       area.codigo_area%TYPE;
   v_numero_secuencial denuncia.numero_secuencial%TYPE;
+  v_anio               denuncia.anio_creacion%TYPE;
 
   v_id_detalle_producto detalle_producto.id_detalle_producto%TYPE;
 
@@ -618,26 +623,31 @@ BEGIN
   SELECT codigo_area INTO v_codigo_area FROM area WHERE id_area = v_area_id;
 
   ----------------------------------------------------------------
-  -- 4. numero secuencial por area (bloqueo por fila -> sin choques)
+  -- 4. numero secuencial por area y anio (bloqueo por fila -> sin choques;
+  --    reinicio anual: el filtro por anio es lo que hace que el
+  --    consecutivo vuelva a 1 cada anio, ver UQ_DENUNCIA_AREA_SEC)
   ----------------------------------------------------------------
+  v_anio := EXTRACT(YEAR FROM SYSDATE);
+
   UPDATE contador_denuncia_area
      SET ultimo_numero = ultimo_numero + 1
    WHERE area_id = v_area_id
+     AND anio = v_anio
   RETURNING ultimo_numero INTO v_numero_secuencial;
 
   IF SQL%ROWCOUNT = 0 THEN
-    INSERT INTO contador_denuncia_area (area_id, ultimo_numero) VALUES (v_area_id, 1);
+    INSERT INTO contador_denuncia_area (area_id, anio, ultimo_numero) VALUES (v_area_id, v_anio, 1);
     v_numero_secuencial := 1;
   END IF;
 
-  p_consecutivo := v_codigo_area || '-' || TO_CHAR(SYSDATE, 'YYYY') || '-' ||
+  p_consecutivo := v_codigo_area || '-' || TO_CHAR(v_anio) || '-' ||
                    LPAD(v_numero_secuencial, 6, '0');
 
   ----------------------------------------------------------------
   -- 5. denuncia (id, area, secuencial, consecutivo, estado por DEFAULT)
   ----------------------------------------------------------------
-  INSERT INTO denuncia (consecutivo, numero_secuencial, area_actual_id)
-  VALUES (p_consecutivo, v_numero_secuencial, v_area_id)
+  INSERT INTO denuncia (consecutivo, numero_secuencial, anio_creacion, area_actual_id)
+  VALUES (p_consecutivo, v_numero_secuencial, v_anio, v_area_id)
   RETURNING id_denuncia INTO p_id_denuncia;
 
   INSERT INTO denuncia_hecho (
@@ -655,7 +665,8 @@ BEGIN
   ) VALUES (
     p_id_denuncia, v_canton_id, v_distrito_id, v_area_id, v_direccion_exacta
   );
-    INSERT INTO denuncia_seguimiento (denuncia_id, codigo_seguimiento)
+
+  INSERT INTO denuncia_seguimiento (denuncia_id, codigo_seguimiento)
   VALUES (p_id_denuncia, p_codigo_seguimiento);
 
   ----------------------------------------------------------------
