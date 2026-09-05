@@ -378,3 +378,7 @@ Frontend/coverage/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Configuraciones locales de seguridad =
+appsettings.Local.json
+*.local.json
