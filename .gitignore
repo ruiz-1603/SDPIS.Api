@@ -356,6 +356,23 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
+# React / Node build output
+Frontend/build/
+Frontend/dist/
+
+# Variables de entorno (nunca deben subirse)
+Frontend/.env
+Frontend/.env.local
+Frontend/.env.*.local
+
+# Logs de npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache de linters/testing
+.eslintcache
+Frontend/coverage/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
