@@ -583,8 +583,90 @@ button {
     }
 
 .card-body {
-    padding: var(--space-5);
+    padding: var(--space-6);
 }
+
+/* Confirmación de denuncia (HU-005) */
+.confirmacion-denuncia__body {
+    text-align: center;
+    padding: var(--space-8) var(--space-6);
+}
+
+    .confirmacion-denuncia__icono {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto var(--space-5);
+        border-radius: 50%;
+        background: var(--color-ok-soft);
+        color: var(--color-ok);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .confirmacion-denuncia__icono svg {
+            width: 32px;
+            height: 32px;
+        }
+
+    .confirmacion-denuncia__body h2 {
+        color: var(--color-navy);
+        margin: 0 0 var(--space-3);
+    }
+
+    .confirmacion-denuncia__texto {
+        color: var(--color-ink-muted);
+        max-width: 440px;
+        margin: 0 auto var(--space-6);
+    }
+
+    .confirmacion-denuncia__numero {
+        background: var(--color-gray-soft);
+        border: 1px dashed var(--color-gray);
+        border-radius: var(--radius-md);
+        padding: var(--space-5);
+        max-width: 360px;
+        margin: 0 auto var(--space-5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+        .confirmacion-denuncia__numero-etiqueta {
+            font-size: var(--fs-caption);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--color-ink-muted);
+            font-weight: 700;
+        }
+
+        .confirmacion-denuncia__numero-valor {
+            font-family: var(--font-heading);
+            font-size: var(--fs-h2);
+            color: var(--color-navy);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            overflow-wrap: anywhere;
+        }
+
+        .confirmacion-denuncia__copiar {
+            margin-top: var(--space-2);
+            padding: 8px 18px;
+            font-size: 12.5px;
+        }
+
+    .confirmacion-denuncia__nota {
+        font-size: var(--fs-small);
+        color: var(--color-ink-muted);
+        margin: 0;
+    }
+
+        .confirmacion-denuncia__banner-correo {
+        max-width: 440px;
+        margin: var(--space-5) auto 0;
+        text-align: left;
+    }
 
 /* Badges de criticidad */
 .badge-criticidad {
@@ -1208,7 +1290,7 @@ table.denuncias-table {
         .footer-institucional .footer-logos img {
             height: 32px;
             width: auto;
-            max-width: 140px;
+            max-width: 100px;
             object-fit: contain;
         }
 
@@ -1296,21 +1378,24 @@ table.denuncias-table {
 
     .hero-publico__logos {
         display: flex;
-        align-items: center;
+        align-items: start;
         justify-content: center;
         gap: var(--space-4);
         margin-bottom: var(--space-5);
     }
 
     .hero-publico__logos img.hero-publico__logo {
-        height: 28px;
-        width: auto;
-        max-height: 28px;
-        max-width: none;
-        object-fit: contain;
-        display: inline-block;
-        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    height: 100px;
+    width: auto;
+    max-height: 100px;
+    max-width: none;
+    object-fit: contain;
+    display: inline-block;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    border-radius: 8px; /* Bordes redondeados */
     }
+
+
 
     .hero-publico .eyebrow {
         font-size: 11px;
@@ -1440,7 +1525,7 @@ table.denuncias-table {
 }
 
 .main-publico {
-    max-width: 820px;
+    max-width: 1100px;
     margin: var(--space-6) auto 60px;
     padding: 0 var(--space-5);
 }
@@ -1800,27 +1885,37 @@ table.denuncias-table {
     background: var(--color-navy);
     color: var(--color-ink-invertido);
     font-size: 11.5px;
-    text-align: center;
-    padding: var(--space-4);
+    padding: var(--space-4) var(--space-5);
     margin-top: var(--space-5);
 }
+
+    .footer-publico__contenido {
+        max-width: 820px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
 
     .footer-publico__logos {
         display: flex;
         align-items: center;
-        justify-content: center;
         gap: var(--space-4);
-        margin-bottom: var(--space-2);
     }
 
     .footer-publico__logos img.footer-publico__logo {
-        height: 28px;
+        height: 82px;
         width: auto;
-        max-height: 28px;
+        max-height: 82px;
         max-width: none;
         object-fit: contain;
-        opacity: 0.9;
-        display: inline-block;
+        display: block;
+    }
+
+    .footer-publico__texto {
+        margin: 0;
+        text-align: left;
     }
 
 /* ==========================================================================

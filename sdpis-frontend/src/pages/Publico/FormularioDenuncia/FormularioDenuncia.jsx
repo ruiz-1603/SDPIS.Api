@@ -17,6 +17,8 @@ import { BloqueProducto } from './BloqueProducto';
 import { SeccionDenunciante } from './SeccionDenunciante';
 import { SeccionRevision } from './SeccionRevision';
 import { ConfirmacionDenuncia } from './ConfirmacionDenuncia';
+import logoMinisterio from '../../../assets/images/logoAzul_Ministerio.png';
+import logoSdpis from '../../../assets/images/logoAzul_SDPIS.png';
 
 const PASOS = [
   { numero: 1, etiqueta: 'Ubicación y hecho' },
@@ -109,11 +111,21 @@ export function FormularioDenuncia() {
 
   return (
     <>
-      <header className="hero-publico">
-        <div className="eyebrow">Ministerio de Salud de Costa Rica</div>
-        <h1>Denuncia de productos de interés sanitario</h1>
-        <p>Complete el siguiente formulario para reportar un producto que incumple la normativa sanitaria.</p>
-      </header>
+     <header className="hero-publico">
+  <div className="hero-publico__logos">
+    <img src={logoMinisterio} alt="Ministerio de Salud de Costa Rica" className="hero-publico__logo" />
+    {/* TODO: reemplazar href="/" por la ruta real cuando exista la página principal */}
+    <a href="/" aria-label="Ir a la página principal de SDPIS">
+      <img
+        src={logoSdpis}
+        alt="SDPIS - Sistema de Denuncias de Productos de Interés Sanitario"
+        className="hero-publico__logo"
+      />
+    </a>
+  </div>
+  <h1>Denuncia de Productos de Interés Sanitario</h1><br  ></br>
+ <em> <p>Complete el siguiente formulario para reportar un producto que incumple la normativa sanitaria.</p></em>
+</header>
 
       <div className="progress-wrap">
         <div className="progress-track">
@@ -207,7 +219,19 @@ export function FormularioDenuncia() {
         </div>
       </main>
 
-      <footer className="footer-publico">Ministerio de Salud de Costa Rica — Unidad de Vigilancia y Control</footer>
+      <footer className="footer-publico">
+        <div className="footer-publico__contenido">
+          <div className="footer-publico__logos">
+            <img src={logoMinisterio} alt="Ministerio de Salud de Costa Rica" className="footer-publico__logo" />
+            <img
+              src={logoSdpis}
+              alt="SDPIS - Sistema de Denuncias de Productos de Interés Sanitario"
+              className="footer-publico__logo"
+            />
+          </div>
+          <p className="footer-publico__texto">Ministerio de Salud de Costa Rica — Unidad de Vigilancia y Control</p>
+        </div>
+      </footer>
     </>
   );
 }
