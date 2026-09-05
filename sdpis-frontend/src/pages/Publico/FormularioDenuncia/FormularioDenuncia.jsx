@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormularioDenuncia } from '../../../hooks/useFormularioDenuncia';
 import { useUbicaciones } from '../../../hooks/useUbicaciones';
 import { BotonAgregarProducto } from '../../../components/comunes/BotonAgregarProducto';
@@ -50,6 +50,22 @@ export function FormularioDenuncia() {
   // intento se muestran los errores en pantalla (heurística 9), para no
   // mostrar el formulario en rojo antes de que interactúe con él.
   const [pasosConIntento, setPasosConIntento] = useState(() => new Set());
+  // Se incrementa cada vez que un intento de avanzar/enviar falla por
+  // errores de validación; el efecto de abajo reacciona a ese cambio para
+  // desplazar la pantalla y llevar el foco al primer campo con error.
+  const [intentoFallidoId, setIntentoFallidoId] = useState(0);
+
+  // Heurística 9 (Ayudar a reconocer y recuperarse de errores): cuando no
+  // se puede avanzar por campos faltantes/incorrectos, se lleva a la persona
+  // directamente al primer campo con error, en vez de dejarla buscarlo.
+  useEffect(() => {
+    if (intentoFallidoId === 0) return;
+    const campoConError = document.querySelector('.field.error');
+    if (!campoConError) return;
+    campoConError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const control = campoConError.querySelector('input, select, textarea');
+    if (control) control.focus({ preventScroll: true });
+  }, [intentoFallidoId]);
 
   const distritoAplica = obtenerDistritos(estado.ubicacion.provincia, estado.ubicacion.canton).length > 0;
   const erroresUbicacion = validarUbicacion(estado.ubicacion, { distritoAplica });
@@ -76,12 +92,17 @@ export function FormularioDenuncia() {
     marcarIntentoEnPasoActual();
     if (pasoActualEsValido) {
       irSiguientePaso();
+    } else {
+      setIntentoFallidoId((n) => n + 1);
     }
   }
 
   async function manejarEnvio() {
     marcarIntentoEnPasoActual();
-    if (!pasoActualEsValido) return;
+    if (!pasoActualEsValido) {
+      setIntentoFallidoId((n) => n + 1);
+      return;
+    }
 
     setEnviando(true);
     try {

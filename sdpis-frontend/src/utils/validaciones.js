@@ -5,7 +5,7 @@
 // documento de identificación: cédula/DIMEX/pasaporte/otro).
 
 const LONGITUD_MINIMA_TEXTO = 3;
-const LONGITUD_MINIMA_IDENTIFICACION = 4;
+const LONGITUD_MINIMA_IDENTIFICACION = 7;
 
 // Verdadero si el valor contiene al menos una letra o número real
 // (rechaza "", "   ", "...", "-.-", pero acepta "N/A", "Ok", etc.)
@@ -15,6 +15,18 @@ function tieneContenidoSignificativo(valor) {
 
 export function esCampoVacio(valor) {
   return (valor ?? '').toString().trim() === '';
+}
+
+// Válido para campos donde SÍ se exige contenido estrictamente numérico
+// (p. ej. teléfono). No usar en identificación: cédula/DIMEX/pasaporte
+// pueden incluir letras y no se les exige un formato específico (HU-002).
+// Acepta dígitos, espacios y separadores comunes de teléfono (+, -, paréntesis).
+const PATRON_TELEFONO = /^(?=(?:\D*\d){8,})[\d\s()+-]+$/;
+
+export function esTelefonoValido(valor) {
+  const texto = (valor ?? '').trim();
+  if (texto === '') return true; // el teléfono es opcional
+  return PATRON_TELEFONO.test(texto) && /\d/.test(texto);
 }
 
 // Validación mínima de formato para textos obligatorios (descripción del
@@ -95,6 +107,9 @@ export function validarDenunciante(denunciante) {
     if (!esIdentificacionValida(denunciante.numeroIdentificacion)) {
       errores.numeroIdentificacion = 'Ingrese un número de identificación válido.';
     }
+  }
+  if (!esTelefonoValido(denunciante.telefono)) {
+    errores.telefono = 'Ingrese solo números en el teléfono.';
   }
   return errores;
 }

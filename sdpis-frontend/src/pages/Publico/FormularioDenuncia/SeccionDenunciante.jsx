@@ -59,26 +59,40 @@ export function SeccionDenunciante({ datos, onChange, errores = {} }) {
           <div className="conditional-box">
             <div className="row2">
               <div className={`field${errores.nombreCompleto ? ' error' : ''}`}>
-                <label>
+                <label htmlFor="denunciante-nombre">
                   Nombre completo{esConfidencial && <span className="req">*</span>}
                 </label>
                 <input
+                  id="denunciante-nombre"
                   type="text"
                   value={datos.nombreCompleto}
                   onChange={(e) => onChange({ ...datos, nombreCompleto: e.target.value })}
+                  aria-invalid={!!errores.nombreCompleto}
+                  aria-describedby={errores.nombreCompleto ? 'denunciante-nombre-error' : undefined}
                 />
-                {errores.nombreCompleto && <div className="error-msg">{errores.nombreCompleto}</div>}
+                {errores.nombreCompleto && (
+                  <div id="denunciante-nombre-error" className="error-msg" role="alert">
+                    {errores.nombreCompleto}
+                  </div>
+                )}
               </div>
               <div className={`field${errores.numeroIdentificacion ? ' error' : ''}`}>
-                <label>
+                <label htmlFor="denunciante-identificacion">
                   Número de identificación{esConfidencial && <span className="req">*</span>}
                 </label>
                 <input
+                  id="denunciante-identificacion"
                   type="text"
                   value={datos.numeroIdentificacion}
                   onChange={(e) => onChange({ ...datos, numeroIdentificacion: e.target.value })}
+                  aria-invalid={!!errores.numeroIdentificacion}
+                  aria-describedby={errores.numeroIdentificacion ? 'denunciante-identificacion-error' : undefined}
                 />
-                {errores.numeroIdentificacion && <div className="error-msg">{errores.numeroIdentificacion}</div>}
+                {errores.numeroIdentificacion && (
+                  <div id="denunciante-identificacion-error" className="error-msg" role="alert">
+                    {errores.numeroIdentificacion}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -101,11 +115,24 @@ export function SeccionDenunciante({ datos, onChange, errores = {} }) {
                 <input type="email" value={datos.correo} onChange={(e) => onChange({ ...datos, correo: e.target.value })} />
                 <div className="help">Si no lo indica, entendemos que no desea recibir notificaciones.</div>
               </div>
-              <div className="field">
-                <label>
+              <div className={`field${errores.telefono ? ' error' : ''}`}>
+                <label htmlFor="denunciante-telefono">
                   Teléfono<span className="opt">(opcional)</span>
                 </label>
-                <input type="tel" value={datos.telefono} onChange={(e) => onChange({ ...datos, telefono: e.target.value })} />
+                <input
+                  id="denunciante-telefono"
+                  type="tel"
+                  inputMode="tel"
+                  value={datos.telefono}
+                  onChange={(e) => onChange({ ...datos, telefono: e.target.value })}
+                  aria-invalid={!!errores.telefono}
+                  aria-describedby={errores.telefono ? 'denunciante-telefono-error' : undefined}
+                />
+                {errores.telefono && (
+                  <div id="denunciante-telefono-error" className="error-msg" role="alert">
+                    {errores.telefono}
+                  </div>
+                )}
               </div>
             </div>
           </div>
