@@ -451,22 +451,10 @@ ALTER TABLE denuncia MODIFY (consecutivo VARCHAR2(60));
 -- y consecutivo con reinicio anual (punto 3)
 -- =====================================================
 
--- Punto 2: tipo_producto_id pasa a ser obligatorio a nivel de tabla
+-- Punto 2: tipo_producto_id obligatorio
 ALTER TABLE detalle_producto MODIFY (tipo_producto_id NOT NULL);
 
--- Punto 3a: el contador ahora es por (area_id, anio), no solo por area_id.
--- La columna anio se define directamente en el CREATE TABLE de mas abajo,
--- como parte de la PK compuesta (area_id, anio) -- no se necesita un ALTER aparte.
-
--- Punto 3b: denuncia necesita el anio como parte de la clave de unicidad,
--- porque el numero_secuencial ahora se repite entre anios distintos.
-ALTER TABLE denuncia ADD anio_creacion NUMBER(4);
-
-ALTER TABLE denuncia DROP CONSTRAINT UQ_DENUNCIA_AREA_SEC;
-ALTER TABLE denuncia
-  ADD CONSTRAINT UQ_DENUNCIA_AREA_SEC UNIQUE (area_actual_id, anio_creacion, numero_secuencial);
-
-
+-- Punto 3: contador por (area_id, anio) -- crear la tabla PRIMERO
 CREATE TABLE contador_denuncia_area (
   area_id       NUMBER NOT NULL,
   anio          NUMBER(4) NOT NULL,
@@ -474,6 +462,12 @@ CREATE TABLE contador_denuncia_area (
   CONSTRAINT PK_CONTADOR_AREA PRIMARY KEY (area_id, anio),
   CONSTRAINT FK_CONTADOR_AREA FOREIGN KEY (area_id) REFERENCES area(id_area)
 );
+-- denuncia necesita el anio como parte de la clave de unicidad
+ALTER TABLE denuncia ADD anio_creacion NUMBER(4);
+
+ALTER TABLE denuncia DROP CONSTRAINT UQ_DENUNCIA_AREA_SEC;
+ALTER TABLE denuncia
+  ADD CONSTRAINT UQ_DENUNCIA_AREA_SEC UNIQUE (area_actual_id, anio_creacion, numero_secuencial);
 
 -- cada vez que se crea un area, se le siembra su contador del anio en curso en 0
 -- para que sp_registrar_denuncia nunca dependa de un INSERT concurrente.
@@ -501,6 +495,7 @@ CREATE OR REPLACE PROCEDURE sp_registrar_denuncia (
   p_consecutivo        OUT VARCHAR2
 )
 IS
+ v_anio_actual NUMBER(4) := EXTRACT(YEAR FROM SYSDATE);
   -- datos del hecho
   v_denunciado_otra_institucion     denuncia_hecho.denunciado_otra_institucion%TYPE;
   v_detalle_otra_institucion        denuncia_hecho.detalle_otra_institucion%TYPE;
@@ -630,15 +625,16 @@ BEGIN
   v_anio := EXTRACT(YEAR FROM SYSDATE);
 
   UPDATE contador_denuncia_area
-     SET ultimo_numero = ultimo_numero + 1
-   WHERE area_id = v_area_id
-     AND anio = v_anio
-  RETURNING ultimo_numero INTO v_numero_secuencial;
+   SET ultimo_numero = ultimo_numero + 1
+ WHERE area_id = v_area_id
+   AND anio = v_anio_actual
+RETURNING ultimo_numero INTO v_numero_secuencial;
 
-  IF SQL%ROWCOUNT = 0 THEN
-    INSERT INTO contador_denuncia_area (area_id, anio, ultimo_numero) VALUES (v_area_id, v_anio, 1);
-    v_numero_secuencial := 1;
-  END IF;
+IF SQL%ROWCOUNT = 0 THEN
+  INSERT INTO contador_denuncia_area (area_id, anio, ultimo_numero)
+  VALUES (v_area_id, v_anio_actual, 1);
+  v_numero_secuencial := 1;
+END IF;
 
   p_consecutivo := v_codigo_area || '-' || TO_CHAR(v_anio) || '-' ||
                    LPAD(v_numero_secuencial, 6, '0');
@@ -646,9 +642,9 @@ BEGIN
   ----------------------------------------------------------------
   -- 5. denuncia (id, area, secuencial, consecutivo, estado por DEFAULT)
   ----------------------------------------------------------------
-  INSERT INTO denuncia (consecutivo, numero_secuencial, anio_creacion, area_actual_id)
-  VALUES (p_consecutivo, v_numero_secuencial, v_anio, v_area_id)
-  RETURNING id_denuncia INTO p_id_denuncia;
+ INSERT INTO denuncia (consecutivo, numero_secuencial, area_actual_id, anio_creacion)
+VALUES (p_consecutivo, v_numero_secuencial, v_area_id, v_anio_actual)
+RETURNING id_denuncia INTO p_id_denuncia;
 
   INSERT INTO denuncia_hecho (
     denuncia_id, nombre_establecimiento, descripcion_hecho,
