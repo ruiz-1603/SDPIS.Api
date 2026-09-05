@@ -221,50 +221,55 @@ export function FormularioDenuncia() {
         </div>
       </main>
 
-    <footer className="footer-publico">
+   <footer className="footer-publico">
   <div className="footer-publico__contenido">
-    <div className="footer-publico__logos">
+    {/* Columna 1: Logo */}
+    <div className="footer-publico__col-logo">
       <img src={logoMinisterio} alt="Ministerio de Salud de Costa Rica" className="footer-publico__logo" />
-      <img
-        src={logoSdpis}
-        alt="SDPIS - Sistema de Denuncias de Productos de Interés Sanitario"
-        className="footer-publico__logo"
-      />
     </div>
 
-    <div className="footer-publico__derecha">
-    <div className="footer-publico__contacto">
-      <h3 className="footer-publico__titulo">Contáctenos</h3>
+    {/* Columna 2: Contáctenos */}
+    <div className="footer-publico__col">
+      <h4 className="footer-publico__titulo">Contáctenos</h4>
       <p>Dirección: Calle 16, Avenidas 6 y 8 - San José, Costa Rica</p>
       <p>Horario: L-V de 8:00 am a 4:00 pm</p>
       <p>Teléfono: (506) 4003-5000</p>
+      <p>Apartado postal: 10123-1000</p>
     </div>
 
-    <div className="footer-publico__redes">
+    {/* Columna 3: Accesos Rápidos */}
+   
+   <div className="footer-publico__col-logo">
+    <img src={logoSdpis} alt="SDPIS" className="footer-publico__logo" />
+    </div>
+
+    {/* Columna 4: Redes Sociales */}
+    <div className="footer-publico__col-redes">
       <a
         href="https://www.facebook.com/msaludcr/"
         target="_blank"
         rel="noreferrer"
-        aria-label="Facebook oficial del Ministerio de Salud"
+        aria-label="Facebook oficial"
         className="footer-publico__red"
       >
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M14 21v-7.5h2.5l.4-3H14V8.6c0-.87.24-1.46 1.5-1.46H17V4.36C16.73 4.32 15.79 4.24 14.69 4.24c-2.3 0-3.88 1.4-3.88 3.98V10.5H8.3v3h2.51V21H14Z" />
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
         </svg>
       </a>
-      
+
+      <span className="footer-publico__redes-separador"></span>
+
       <a
         href="https://www.youtube.com/user/ministeriodesaludcr"
         target="_blank"
         rel="noreferrer"
-        aria-label="YouTube oficial del Ministerio de Salud"
+        aria-label="YouTube oficial"
         className="footer-publico__red"
       >
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M21.58 7.2a2.75 2.75 0 0 0-1.94-1.95C17.9 4.75 12 4.75 12 4.75s-5.9 0-7.64.5A2.75 2.75 0 0 0 2.42 7.2 28.7 28.7 0 0 0 1.92 12a28.7 28.7 0 0 0 .5 4.8 2.75 2.75 0 0 0 1.94 1.95c1.74.5 7.64.5 7.64.5s5.9 0 7.64-.5a2.75 2.75 0 0 0 1.94-1.95c.34-1.58.5-3.19.5-4.8a28.7 28.7 0 0 0-.5-4.8ZM9.98 15.02V8.98L15.5 12l-5.52 3.02Z" />
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
         </svg>
       </a>
-    </div>
     </div>
   </div>
 </footer>
