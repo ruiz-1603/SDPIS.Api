@@ -65,7 +65,7 @@ export function ConfirmacionDenuncia({ numeroDenuncia, denunciante }) {
 
               {tieneCorreo && (
                 <div className="banner-info confirmacion-denuncia__banner-correo">
-                  <span aria-hidden="true">✉️</span>
+                  <span aria-hidden="true">ℹ️</span>
                   <span>
                     Se le estará informando al correo <strong>{correo}</strong> sobre el avance de su denuncia.
                   </span>
