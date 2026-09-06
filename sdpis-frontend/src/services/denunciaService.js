@@ -2,7 +2,7 @@ import { normalizarCamposVacios } from '../utils/normalizarCamposVacios';
 
 // TODO: reemplazar por la URL real del backend cuando exista POST /api/denuncias
 const URL_API_DENUNCIAS = '/api/denuncias';
-const USAR_MOCK = true;
+const USAR_MOCK = false;
 
 export async function registrarDenuncia(datosFormulario) {
   const payload = normalizarCamposVacios(datosFormulario);
