@@ -73,12 +73,20 @@ export function FormularioDenuncia() {
   const erroresProductos = validarProductos(estado.productos);
   const erroresDenunciante = validarDenunciante(estado.denunciante);
 
+  const formularioCompletoEsValido =
+    !hayErrores(erroresUbicacion) &&
+    !hayErrores(erroresHecho) &&
+    !hayErroresEnProductos(erroresProductos) &&
+    !hayErrores(erroresDenunciante);
+
   const pasoActualEsValido =
     estado.paso === 1
       ? !hayErrores(erroresUbicacion) && !hayErrores(erroresHecho)
       : estado.paso === 2
         ? !hayErroresEnProductos(erroresProductos)
-        : !hayErrores(erroresDenunciante);
+        : estado.paso === 3
+          ? !hayErrores(erroresDenunciante)
+          : formularioCompletoEsValido;
 
   const intentoEnPasoActual = pasosConIntento.has(estado.paso);
 
@@ -97,9 +105,21 @@ export function FormularioDenuncia() {
     }
   }
 
+  function primerPasoConErrores() {
+    if (hayErrores(erroresUbicacion) || hayErrores(erroresHecho)) return 1;
+    if (hayErroresEnProductos(erroresProductos)) return 2;
+    if (hayErrores(erroresDenunciante)) return 3;
+    return null;
+  }
+
   async function manejarEnvio() {
     marcarIntentoEnPasoActual();
     if (!pasoActualEsValido) {
+      const pasoConErrores = primerPasoConErrores();
+      if (pasoConErrores !== null && pasoConErrores !== estado.paso) {
+        setPasosConIntento((prev) => new Set(prev).add(pasoConErrores));
+        irAPaso(pasoConErrores);
+      }
       setIntentoFallidoId((n) => n + 1);
       return;
     }
