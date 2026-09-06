@@ -29,7 +29,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("DesarrolloLocal");           // ← CORS primero
-app.UseHttpsRedirection();                // ← Redirect después
+                                          //app.UseHttpsRedirection();                // ← Redirect después
+                                          // Deshabilitado en local: rompe el
+                                          // preflight de CORS al redirigir
+                                          // http://localhost:5290 -> https://localhost:7064
 app.UseMiddleware<ManejadorDeErroresMiddleware>();
 app.UseAuthorization();
 app.MapControllers();

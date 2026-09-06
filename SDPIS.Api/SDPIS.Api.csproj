@@ -25,7 +25,6 @@
     <Folder Include="Frontend\src\pages\institucional\" />
     <Folder Include="Frontend\src\pages\publico\" />
     <Folder Include="Models\Entities\" />
-    <Folder Include="Scripts\" />
   </ItemGroup>
 
 </Project>
