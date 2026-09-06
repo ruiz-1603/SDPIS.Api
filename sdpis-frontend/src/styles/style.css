@@ -592,81 +592,91 @@ button {
     padding: var(--space-8) var(--space-6);
 }
 
-    .confirmacion-denuncia__icono {
-        width: 64px;
-        height: 64px;
-        margin: 0 auto var(--space-5);
-        border-radius: 50%;
-        background: var(--color-ok-soft);
-        color: var(--color-ok);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+.confirmacion-denuncia__icono {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-5);
+    border-radius: 50%;
+    background: var(--color-ok-soft);
+    color: var(--color-ok);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .confirmacion-denuncia__icono svg {
+        width: 32px;
+        height: 32px;
     }
 
-        .confirmacion-denuncia__icono svg {
-            width: 32px;
-            height: 32px;
-        }
+.confirmacion-denuncia__body h2 {
+    color: var(--color-navy);
+    margin: 0 0 var(--space-3);
+}
 
-    .confirmacion-denuncia__body h2 {
-        color: var(--color-navy);
-        margin: 0 0 var(--space-3);
-    }
+.confirmacion-denuncia__texto {
+    color: var(--color-ink-muted);
+    max-width: 440px;
+    margin: 0 auto var(--space-6);
+}
 
-    .confirmacion-denuncia__texto {
-        color: var(--color-ink-muted);
-        max-width: 440px;
-        margin: 0 auto var(--space-6);
-    }
+.confirmacion-denuncia__texto--grande {
+    max-width: 560px;
+    font-size: var(--fs-h3);
+    line-height: 1.5;
+}
 
-    .confirmacion-denuncia__numero {
-        background: var(--color-gray-soft);
-        border: 1px dashed var(--color-gray);
-        border-radius: var(--radius-md);
-        padding: var(--space-5);
-        max-width: 360px;
-        margin: 0 auto var(--space-5);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-2);
-    }
+.confirmacion-denuncia__volver {
+    margin-top: var(--space-6);
+}
 
-        .confirmacion-denuncia__numero-etiqueta {
-            font-size: var(--fs-caption);
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: var(--color-ink-muted);
-            font-weight: 700;
-        }
+.confirmacion-denuncia__numero {
+    background: var(--color-gray-soft);
+    border: 1px dashed var(--color-gray);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    max-width: 360px;
+    margin: 0 auto var(--space-5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+}
 
-        .confirmacion-denuncia__numero-valor {
-            font-family: var(--font-heading);
-            font-size: var(--fs-h2);
-            color: var(--color-navy);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            overflow-wrap: anywhere;
-        }
+.confirmacion-denuncia__numero-etiqueta {
+    font-size: var(--fs-caption);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    font-weight: 700;
+}
 
-        .confirmacion-denuncia__copiar {
-            margin-top: var(--space-2);
-            padding: 8px 18px;
-            font-size: 12.5px;
-        }
+.confirmacion-denuncia__numero-valor {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h2);
+    color: var(--color-navy);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    overflow-wrap: anywhere;
+}
 
-    .confirmacion-denuncia__nota {
-        font-size: var(--fs-small);
-        color: var(--color-ink-muted);
-        margin: 0;
-    }
+.confirmacion-denuncia__copiar {
+    margin-top: var(--space-2);
+    padding: 8px 18px;
+    font-size: 12.5px;
+}
 
-        .confirmacion-denuncia__banner-correo {
-        max-width: 440px;
-        margin: var(--space-5) auto 0;
-        text-align: left;
-    }
+.confirmacion-denuncia__nota {
+    font-size: var(--fs-small);
+    color: var(--color-ink-muted);
+    margin: 0;
+}
+
+.confirmacion-denuncia__banner-correo {
+    max-width: 440px;
+    margin: var(--space-5) auto 0;
+    text-align: left;
+}
 
 /* Badges de criticidad */
 .badge-criticidad {
@@ -1378,62 +1388,62 @@ table.denuncias-table {
         position: relative;
     }
 
-    .hero-publico__logos {
-        display: flex;
-        align-items: start;
-        justify-content: center;
-        gap: var(--space-4);
-        margin-bottom: var(--space-5);
-    }
+.hero-publico__logos {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
 
     .hero-publico__logos img.hero-publico__logo {
-    height: 100px;
-    width: auto;
-    max-height: 100px;
-    max-width: none;
-    object-fit: contain;
-    display: inline-block;
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
-    border-radius: 8px; /* Bordes redondeados */
-    }
-
-
-
-    .hero-publico .eyebrow {
-        font-size: 11px;
-        letter-spacing: 2.4px;
-        text-transform: uppercase;
-        color: var(--color-gold);
-        font-weight: 700;
-    }
-
-    .hero-publico h1 {
-        color: var(--color-white);
-        font-size: 40px;
-        margin: var(--space-2) 0 0;
-        position: relative;
+        height: 100px;
+        width: auto;
+        max-height: 100px;
+        max-width: none;
+        object-fit: contain;
         display: inline-block;
-        padding-bottom: var(--space-3);
+        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+        border-radius: 8px; /* Bordes redondeados */
     }
 
-        .hero-publico h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 1000px;
-            height: 3px;
-            border-radius: var(--radius-pill);
-            background: var(--color-gold);
-        }
 
-    .hero-publico p {
-        font-size: 16px;
-        color: var(--color-ink-invertido);
-        max-width: 980px;
-        margin: var(--space-2) auto 0;
+
+.hero-publico .eyebrow {
+    font-size: 11px;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    font-weight: 700;
+}
+
+.hero-publico h1 {
+    color: var(--color-white);
+    font-size: 40px;
+    margin: var(--space-2) 0 0;
+    position: relative;
+    display: inline-block;
+    padding-bottom: var(--space-3);
+}
+
+    .hero-publico h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1000px;
+        height: 3px;
+        border-radius: var(--radius-pill);
+        background: var(--color-gold);
     }
+
+.hero-publico p {
+    font-size: 16px;
+    color: var(--color-ink-invertido);
+    max-width: 980px;
+    margin: var(--space-2) auto 0;
+}
 
 /* Indicador de pasos del formulario */
 .progress-wrap {
@@ -1946,21 +1956,21 @@ table.denuncias-table {
     text-align: left;
 }
 
-.footer-publico__links li {
-    margin-bottom: 4px;
-}
+    .footer-publico__links li {
+        margin-bottom: 4px;
+    }
 
-.footer-publico__links a {
-    color: #d1d5db;
-    text-decoration: none;
-    font-size: 12px;
-    transition: color var(--transition);
-}
+    .footer-publico__links a {
+        color: #d1d5db;
+        text-decoration: none;
+        font-size: 12px;
+        transition: color var(--transition);
+    }
 
-.footer-publico__links a:hover {
-    color: var(--color-gold);
-    text-decoration: underline;
-}
+        .footer-publico__links a:hover {
+            color: var(--color-gold);
+            text-decoration: underline;
+        }
 
 /* Columna 4: Redes Sociales */
 .footer-publico__col-redes {
@@ -1978,15 +1988,15 @@ table.denuncias-table {
     transition: color var(--transition), transform var(--transition);
 }
 
-.footer-publico__red:hover {
-    color: var(--color-gold);
-    transform: translateY(-2px);
-}
+    .footer-publico__red:hover {
+        color: var(--color-gold);
+        transform: translateY(-2px);
+    }
 
-.footer-publico__red svg {
-    width: 26px;
-    height: 26px;
-}
+    .footer-publico__red svg {
+        width: 26px;
+        height: 26px;
+    }
 
 .footer-publico__redes-separador {
     display: inline-block;
