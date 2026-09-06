@@ -1,7 +1,7 @@
 import { SelectorMotivos } from '../../../components/comunes/SelectorMotivos';
 
 // TODO: reemplazar por el catálogo real de tipo_producto (Base de Datos B02) vía services/
-const TIPOS_PRODUCTO = ['Medicamento', 'Cosmético', 'Alimento', 'Dispositivo médico', 'Otro'];
+const TIPOS_PRODUCTO = ['Medicamento', 'Cosmético', 'Alimento', 'Dispositivo médico'];
 
 // producto: { nombre, descripcion, registroSanitario, marca, lote, fabricante,
 //             paisOrigen, presentacion, fechaCompra, tipoProducto, motivos }
@@ -29,28 +29,30 @@ export function BloqueProducto({ producto, index, onChange, onEliminar, puedeEli
       <div className="producto-block-body">
         <span className="subsection-lbl">Datos del producto</span>
 
-        <div className={`field${errores.nombre ? ' error' : ''}`}>
-          <label>
-            Nombre del producto<span className="req">*</span>
-          </label>
-          <input
-            type="text"
-            value={producto.nombre}
-            onChange={(e) => actualizarCampo('nombre', e.target.value)}
-          />
-          {errores.nombre && <div className="error-msg">{errores.nombre}</div>}
-        </div>
+              <div className={`field${errores.nombre ? ' error' : ''}`}>
+                  <label>
+                      Nombre del producto<span className="req">*</span>
+                  </label>
+                  <input
+                      type="text"
+                      value={producto.nombre}
+                      onChange={(e) => actualizarCampo('nombre', e.target.value)}
+                  />
+                  {!errores.nombre && <div className="help">Mínimo 2 caracteres.</div>}
+                  {errores.nombre && <div className="error-msg">{errores.nombre}</div>}
+              </div>
 
-        <div className={`field${errores.descripcion ? ' error' : ''}`}>
-          <label>
-            Descripción<span className="req">*</span>
-          </label>
-          <textarea
-            value={producto.descripcion}
-            onChange={(e) => actualizarCampo('descripcion', e.target.value)}
-          />
-          {errores.descripcion && <div className="error-msg">{errores.descripcion}</div>}
-        </div>
+              <div className={`field${errores.descripcion ? ' error' : ''}`}>
+                  <label>
+                      Descripción<span className="req">*</span>
+                  </label>
+                  <textarea
+                      value={producto.descripcion}
+                      onChange={(e) => actualizarCampo('descripcion', e.target.value)}
+                  />
+                  {!errores.descripcion && <div className="help">Mínimo 5 caracteres.</div>}
+                  {errores.descripcion && <div className="error-msg">{errores.descripcion}</div>}
+              </div>
 
         <div className="row2">
           <div className={`field${errores.tipoProducto ? ' error' : ''}`}>

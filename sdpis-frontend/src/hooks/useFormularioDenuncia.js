@@ -30,7 +30,7 @@ function crearEstadoInicial() {
     },
     productos: [{ ...PRODUCTO_VACIO }],
     denunciante: {
-      tipoTramite: 'normal',
+      tipoTramite: 'confidencial',
       nombreCompleto: '',
       numeroIdentificacion: '',
       direccionDomicilio: '',

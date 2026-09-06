@@ -1,5 +1,4 @@
 const ETIQUETA_TRAMITE = {
-  normal: 'Denuncia identificada',
   confidencial: 'Denuncia confidencial',
   anonima: 'Denuncia anónima',
 };

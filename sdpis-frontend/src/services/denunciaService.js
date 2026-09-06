@@ -21,7 +21,6 @@ const TIPOS_PRODUCTO_MAP = {
   'Cosmético': 2,
   'Alimento': 3,
   'Dispositivo médico': 4,
-  'Otro': 5,
 };
 
 // Necesitamos las funciones de useUbicaciones para resolver los IDs.
@@ -29,7 +28,7 @@ const TIPOS_PRODUCTO_MAP = {
 function mapearFormularioARequest(datosFormulario, obtenerIdCanton, obtenerIdDistrito) {
   const { ubicacion, hecho, denunciante, productos } = datosFormulario;
   const esAnonima = denunciante.tipoTramite === 'anonima';
-  const esConfidencial = denunciante.tipoTramite === 'confidencial';
+  //const esConfidencial = denunciante.tipoTramite === 'confidencial';
 
   return {
     hecho: {

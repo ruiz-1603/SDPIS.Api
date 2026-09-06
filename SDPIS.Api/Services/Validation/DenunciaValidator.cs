@@ -45,7 +45,7 @@ public static class DenunciaValidator
                 var p = request.Productos[i];
                 var etiqueta = $"Producto #{i + 1}";
 
-                if (!ValidadorTexto.EsValido(p.NombreProductoTexto))
+                if (!ValidadorTexto.EsValido(p.NombreProductoTexto, longitudMinima: 2))
                     errores.Add($"{etiqueta}: el nombre del producto es obligatorio.");
 
                 if (!ValidadorTexto.EsValido(p.DescripcionProducto, longitudMinima: 5))

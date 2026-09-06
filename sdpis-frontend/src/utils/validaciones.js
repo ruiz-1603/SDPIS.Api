@@ -4,8 +4,13 @@
 // No se exige un formato específico (p. ej. no se valida el tipo de
 // documento de identificación: cédula/DIMEX/pasaporte/otro).
 
-const LONGITUD_MINIMA_TEXTO = 3;
-const LONGITUD_MINIMA_IDENTIFICACION = 7;
+const LONGITUD_MINIMA_TEXTO = 3;                 // nombre establecimiento, nombre denunciante
+const LONGITUD_MINIMA_DESCRIPCION_HECHO = 10;    // coincide con el backend
+const LONGITUD_MINIMA_DESCRIPCION_PRODUCTO = 5;  // coincide con el backend
+const LONGITUD_MINIMA_IDENTIFICACION = 5;        // antes 7, el backend exige 5
+
+const LONGITUD_MINIMA_NOMBRE_PRODUCTO = 2;       // nuevo: nombres de producto pueden ser cortos (ej. "V8")
+
 
 // Verdadero si el valor contiene al menos una letra o número real
 // (rechaza "", "   ", "...", "-.-", pero acepta "N/A", "Ok", etc.)
@@ -59,30 +64,33 @@ export function validarUbicacion(ubicacion, { distritoAplica = false } = {}) {
 }
 
 export function validarHecho(hecho) {
-  const errores = {};
-  if (!esTextoValido(hecho.descripcion)) {
-    errores.descripcion = 'Describa la problemática denunciada.';
-  }
-  return errores;
+    const errores = {};
+    if (!esTextoValido(hecho.nombreEstablecimiento)) {
+        errores.nombreEstablecimiento = 'Ingrese el nombre del establecimiento o persona a denunciar (mínimo 3 caracteres).';
+    }
+    if (!esTextoValido(hecho.descripcion, LONGITUD_MINIMA_DESCRIPCION_HECHO)) {
+        errores.descripcion = 'Describa la problemática denunciada (mínimo 10 caracteres, sin solo puntuación).';
+    }
+    return errores;
 }
 
 // --- Paso 2: Producto(s) -----------------------------------------------------
 
 export function validarProducto(producto) {
-  const errores = {};
-  if (!esTextoValido(producto.nombre)) {
-    errores.nombre = 'Ingrese el nombre del producto.';
-  }
-  if (!esTextoValido(producto.descripcion)) {
-    errores.descripcion = 'Ingrese una descripción del producto.';
-  }
-  if (esCampoVacio(producto.tipoProducto)) {
-    errores.tipoProducto = 'Seleccione el tipo de producto.';
-  }
-  if (!producto.motivos || producto.motivos.length === 0) {
-    errores.motivos = 'Seleccione al menos un motivo de denuncia.';
-  }
-  return errores;
+    const errores = {};
+    if (!esTextoValido(producto.nombre, LONGITUD_MINIMA_NOMBRE_PRODUCTO)) {
+        errores.nombre = 'Ingrese el nombre del producto (mínimo 2 caracteres).';
+    }
+    if (!esTextoValido(producto.descripcion, LONGITUD_MINIMA_DESCRIPCION_PRODUCTO)) {
+        errores.descripcion = 'Ingrese una descripción del producto (mínimo 5 caracteres).';
+    }
+    if (esCampoVacio(producto.tipoProducto)) {
+        errores.tipoProducto = 'Seleccione el tipo de producto.';
+    }
+    if (!producto.motivos || producto.motivos.length === 0) {
+        errores.motivos = 'Seleccione al menos un motivo de denuncia.';
+    }
+    return errores;
 }
 
 // Un objeto de errores por cada producto, en la misma posición del arreglo.
@@ -99,7 +107,10 @@ export function hayErroresEnProductos(erroresProductos) {
 // Nombre e identificación solo son obligatorios en la denuncia confidencial;
 // en la anónima no se solicitan y en la identificada ("normal") son opcionales.
 export function validarDenunciante(denunciante) {
-  const errores = {};
+    const errores = {};
+    if (!denunciante.tipoTramite) {
+        errores.tipoTramite = 'Seleccione cómo desea presentar la denuncia.';
+    }
   if (denunciante.tipoTramite === 'confidencial') {
     if (!esTextoValido(denunciante.nombreCompleto)) {
       errores.nombreCompleto = 'Ingrese su nombre completo.';

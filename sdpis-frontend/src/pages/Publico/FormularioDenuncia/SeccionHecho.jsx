@@ -15,29 +15,35 @@ export function SeccionHecho({ datos, onChange, errores = {} }) {
         </div>
       </div>
       <div className="card-body">
-        <div className={`field${errores.nombreEstablecimiento ? ' error' : ''}`}>
-          <label>
-            Nombre del establecimiento o persona a denunciar<span className="req">*</span>
-          </label>
-          <input
-            type="text"
-            value={datos.nombreEstablecimiento}
-            onChange={(e) => onChange({ ...datos, nombreEstablecimiento: e.target.value })}
-          />
-          {errores.nombreEstablecimiento && <div className="error-msg">{errores.nombreEstablecimiento}</div>}
-        </div>
+              <div className={`field${errores.nombreEstablecimiento ? ' error' : ''}`}>
+                  <label>
+                      Nombre del establecimiento o persona a denunciar<span className="req">*</span>
+                  </label>
+                  <input
+                      type="text"
+                      value={datos.nombreEstablecimiento}
+                      onChange={(e) => onChange({ ...datos, nombreEstablecimiento: e.target.value })}
+                  />
+                  {!errores.nombreEstablecimiento && (
+                      <div className="help">Mínimo 3 caracteres.</div>
+                  )}
+                  {errores.nombreEstablecimiento && <div className="error-msg">{errores.nombreEstablecimiento}</div>}
+              </div>
 
-        <div className={`field${errores.descripcion ? ' error' : ''}`}>
-          <label>
-            Descripción cronológica<span className="req">*</span>
-          </label>
-          <textarea
-            value={datos.descripcion}
-            onChange={(e) => onChange({ ...datos, descripcion: e.target.value })}
-            placeholder="Relate los hechos en orden cronológico"
-          />
-          {errores.descripcion && <div className="error-msg">{errores.descripcion}</div>}
-        </div>
+              <div className={`field${errores.descripcion ? ' error' : ''}`}>
+                  <label>
+                      Descripción cronológica<span className="req">*</span>
+                  </label>
+                  <textarea
+                      value={datos.descripcion}
+                      onChange={(e) => onChange({ ...datos, descripcion: e.target.value })}
+                      placeholder="Relate los hechos en orden cronológico"
+                  />
+                  {!errores.descripcion && (
+                      <div className="help">Mínimo 10 caracteres. Evite dejar solo signos de puntuación.</div>
+                  )}
+                  {errores.descripcion && <div className="error-msg">{errores.descripcion}</div>}
+              </div>
 
         <div className="row2">
           <div className="field">

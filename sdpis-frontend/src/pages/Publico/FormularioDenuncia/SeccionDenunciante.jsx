@@ -21,14 +21,6 @@ export function SeccionDenunciante({ datos, onChange, errores = {} }) {
       </div>
       <div className="card-body">
         <div className="tramite-options">
-          <div
-            className={`tramite-card${!esAnonima && !esConfidencial ? ' selected' : ''}`}
-            onClick={() => seleccionarTramite('normal')}
-          >
-            <div className="radio-dot" />
-            <h3>Denuncia identificada</h3>
-            <p>Registra sus datos de contacto para dar seguimiento al caso.</p>
-          </div>
 
           <div className={`tramite-card${esConfidencial ? ' selected' : ''}`} onClick={() => seleccionarTramite('confidencial')}>
             <div className="radio-dot" />

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // numeroDenuncia: string generado por el backend (HU-005)
-// denunciante: { tipoTramite: 'normal' | 'anonima' | 'confidencial', correo, ... } (HU-002)
+// denunciante: { tipoTramite: 'anonima' | 'confidencial', correo, ... } (HU-002)
 // onVolverAlInicio: callback para reiniciar el formulario y regresar al inicio
 export function ConfirmacionDenuncia({ numeroDenuncia, denunciante, onVolverAlInicio }) {
     const [copiado, setCopiado] = useState(false);
@@ -49,7 +49,7 @@ export function ConfirmacionDenuncia({ numeroDenuncia, denunciante, onVolverAlIn
                         <>
                             <p className="confirmacion-denuncia__texto">
                                 Su denuncia fue recibida por el Ministerio de Salud.{' '}
-                                <strong>SE RECOMIENDA GUARDAR EL NÚMERO DE DENUNCIA.</strong>
+                                <strong>SE RECOMIENDA GUARDAR EL NÚMERO DE DENUNCIA PARA CONSULTA.</strong>
                             </p>
 
                             <div className="confirmacion-denuncia__numero">
