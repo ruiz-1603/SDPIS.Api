@@ -64,11 +64,11 @@ export function SelectorUbicacionCascada({ valores, onChange, errores = {} }) {
           disabled={!valores.canton || distritos.length === 0}
         >
           <option value="">Seleccione...</option>
-          {distritos.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
+        {distritos.map((d) => (
+  <option key={d.idDistrito} value={d.distrito}>
+    {d.distrito}
+  </option>
+))}
         </select>
         {errores.distrito && <div className="error-msg">{errores.distrito}</div>}
       </div>

@@ -15,6 +15,18 @@ export function SeccionHecho({ datos, onChange, errores = {} }) {
         </div>
       </div>
       <div className="card-body">
+        <div className={`field${errores.nombreEstablecimiento ? ' error' : ''}`}>
+          <label>
+            Nombre del establecimiento o persona a denunciar<span className="req">*</span>
+          </label>
+          <input
+            type="text"
+            value={datos.nombreEstablecimiento}
+            onChange={(e) => onChange({ ...datos, nombreEstablecimiento: e.target.value })}
+          />
+          {errores.nombreEstablecimiento && <div className="error-msg">{errores.nombreEstablecimiento}</div>}
+        </div>
+
         <div className={`field${errores.descripcion ? ' error' : ''}`}>
           <label>
             Descripción cronológica<span className="req">*</span>

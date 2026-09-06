@@ -48,6 +48,8 @@ export function SeccionRevision({ estado, distritoAplica, onEditarPaso }) {
             )}
             <dt>Dirección exacta</dt>
             <dd>{valorOGuion(ubicacion.direccionExacta)}</dd>
+            <dt>Establecimiento o persona denunciada</dt>
+            <dd>{valorOGuion(hecho.nombreEstablecimiento)}</dd>
             <dt>Descripción cronológica</dt>
             <dd>{valorOGuion(hecho.descripcion)}</dd>
             <dt>¿Denunciado en otra institución?</dt>

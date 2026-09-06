@@ -11,6 +11,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDenunciaRepository, DenunciaRepository>();
 builder.Services.AddScoped<IDenunciaService, DenunciaService>();
 
+// Agregar CORS para desarrollo
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DesarrolloLocal", policy =>
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -19,7 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("DesarrolloLocal");           // ← CORS primero
+app.UseHttpsRedirection();                // ← Redirect después
 app.UseMiddleware<ManejadorDeErroresMiddleware>();
 app.UseAuthorization();
 app.MapControllers();

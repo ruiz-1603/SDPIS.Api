@@ -21,6 +21,7 @@ function crearEstadoInicial() {
     paso: 1,
     ubicacion: { provincia: '', canton: '', distrito: '', direccionExacta: '' },
     hecho: {
+      nombreEstablecimiento: '',
       descripcion: '',
       presentadaOtraInstitucion: '',
       detalleOtraInstitucion: '',

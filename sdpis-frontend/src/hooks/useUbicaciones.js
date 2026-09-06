@@ -1,7 +1,4 @@
 import { useEffect, useState } from 'react';
-
-// TODO: reemplazar el import local por una llamada a services/ubicacionService.js
-// cuando exista el endpoint real de ubicaciones en el backend.
 import ubicaciones from '../data/ubicaciones.json';
 
 export function useUbicaciones() {
@@ -22,5 +19,19 @@ export function useUbicaciones() {
     return canton ? canton.distritos : [];
   }
 
-  return { provincias, obtenerCantones, obtenerDistritos };
+  // NUEVO: obtiene el ID del cantón seleccionado
+  function obtenerIdCanton(nombreProvincia, nombreCanton) {
+    const cantones = obtenerCantones(nombreProvincia);
+    const canton = cantones.find((c) => c.canton === nombreCanton);
+    return canton ? canton.idCanton : null;
+  }
+
+  // NUEVO: obtiene el ID del distrito seleccionado
+  function obtenerIdDistrito(nombreProvincia, nombreCanton, nombreDistrito) {
+    const distritos = obtenerDistritos(nombreProvincia, nombreCanton);
+    const distrito = distritos.find((d) => d.distrito === nombreDistrito);
+    return distrito ? distrito.idDistrito : null;
+  }
+
+  return { provincias, obtenerCantones, obtenerDistritos, obtenerIdCanton, obtenerIdDistrito };
 }
