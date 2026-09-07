@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 // visible: boolean — controla si el modal se muestra
 // onCerrar: () => void
@@ -31,7 +32,13 @@ export function ModalIngresoInstitucional({ visible, onCerrar, onIngresoSimulado
     setClave('');
   }
 
-  return (
+  // Se renderiza en un portal (fuera de .pp-transicion-vista) porque ese
+  // contenedor anima `transform`/`filter` (ver App.jsx y style.css), lo cual
+  // convierte a cualquier ancestro animado en el bloque de referencia para
+  // los hijos con position:fixed. Sin el portal, el overlay no se centra
+  // respecto a la ventana sino respecto a la altura completa del documento,
+  // obligando a hacer scroll para verlo.
+  return createPortal(
     <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="tituloIngresoInstitucional">
       <div className="modal-card">
         <div className="modal-header">
@@ -82,6 +89,7 @@ export function ModalIngresoInstitucional({ visible, onCerrar, onIngresoSimulado
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
