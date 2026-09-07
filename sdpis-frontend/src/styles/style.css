@@ -42,7 +42,7 @@
     --color-critico-bajo-soft: #e3f2e9;
     /* --- Tipografía (D08) --- */
     --font-heading: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
-    --font-body: Arial, Helvetica, sans-serif;
+    --font-body: 'Inter', Arial, Helvetica, sans-serif;
     --fs-h1: clamp(30px, 3.2vw, 44px);
     --fs-h2: clamp(24px, 2.6vw, 34px);
     --fs-h3: clamp(19px, 2vw, 26px);
@@ -95,6 +95,7 @@
 
 html {
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -131,6 +132,11 @@ p {
     margin: 0 0 var(--space-3);
 }
 
+.sub {
+    font-size: var(--fs-small);
+    color: var(--color-ink-muted);
+}
+
 a {
     color: var(--color-blue-medium);
     text-decoration: none;
@@ -160,6 +166,10 @@ button {
         animation-duration: 0.001ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
+    }
+
+    html {
+        scroll-behavior: auto;
     }
 }
 
@@ -592,91 +602,81 @@ button {
     padding: var(--space-8) var(--space-6);
 }
 
-.confirmacion-denuncia__icono {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto var(--space-5);
-    border-radius: 50%;
-    background: var(--color-ok-soft);
-    color: var(--color-ok);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-    .confirmacion-denuncia__icono svg {
-        width: 32px;
-        height: 32px;
+    .confirmacion-denuncia__icono {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto var(--space-5);
+        border-radius: 50%;
+        background: var(--color-ok-soft);
+        color: var(--color-ok);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-.confirmacion-denuncia__body h2 {
-    color: var(--color-navy);
-    margin: 0 0 var(--space-3);
-}
+        .confirmacion-denuncia__icono svg {
+            width: 32px;
+            height: 32px;
+        }
 
-.confirmacion-denuncia__texto {
-    color: var(--color-ink-muted);
-    max-width: 440px;
-    margin: 0 auto var(--space-6);
-}
+    .confirmacion-denuncia__body h2 {
+        color: var(--color-navy);
+        margin: 0 0 var(--space-3);
+    }
 
-.confirmacion-denuncia__texto--grande {
-    max-width: 560px;
-    font-size: var(--fs-h3);
-    line-height: 1.5;
-}
+    .confirmacion-denuncia__texto {
+        color: var(--color-ink-muted);
+        max-width: 440px;
+        margin: 0 auto var(--space-6);
+    }
 
-.confirmacion-denuncia__volver {
-    margin-top: var(--space-6);
-}
+    .confirmacion-denuncia__numero {
+        background: var(--color-gray-soft);
+        border: 1px dashed var(--color-gray);
+        border-radius: var(--radius-md);
+        padding: var(--space-5);
+        max-width: 360px;
+        margin: 0 auto var(--space-5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+    }
 
-.confirmacion-denuncia__numero {
-    background: var(--color-gray-soft);
-    border: 1px dashed var(--color-gray);
-    border-radius: var(--radius-md);
-    padding: var(--space-5);
-    max-width: 360px;
-    margin: 0 auto var(--space-5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-}
+        .confirmacion-denuncia__numero-etiqueta {
+            font-size: var(--fs-caption);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--color-ink-muted);
+            font-weight: 700;
+        }
 
-.confirmacion-denuncia__numero-etiqueta {
-    font-size: var(--fs-caption);
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-    font-weight: 700;
-}
+        .confirmacion-denuncia__numero-valor {
+            font-family: var(--font-heading);
+            font-size: var(--fs-h2);
+            color: var(--color-navy);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            overflow-wrap: anywhere;
+        }
 
-.confirmacion-denuncia__numero-valor {
-    font-family: var(--font-heading);
-    font-size: var(--fs-h2);
-    color: var(--color-navy);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    overflow-wrap: anywhere;
-}
+        .confirmacion-denuncia__copiar {
+            margin-top: var(--space-2);
+            padding: 8px 18px;
+            font-size: 12.5px;
+        }
 
-.confirmacion-denuncia__copiar {
-    margin-top: var(--space-2);
-    padding: 8px 18px;
-    font-size: 12.5px;
-}
+    .confirmacion-denuncia__nota {
+        font-size: var(--fs-small);
+        color: var(--color-ink-muted);
+        margin: 0;
+    }
 
-.confirmacion-denuncia__nota {
-    font-size: var(--fs-small);
-    color: var(--color-ink-muted);
-    margin: 0;
-}
-
-.confirmacion-denuncia__banner-correo {
-    max-width: 440px;
-    margin: var(--space-5) auto 0;
-    text-align: left;
-}
+        .confirmacion-denuncia__banner-correo {
+        max-width: 440px;
+        margin: var(--space-5) auto 0;
+        text-align: left;
+    }
 
 /* Badges de criticidad */
 .badge-criticidad {
@@ -1010,11 +1010,12 @@ textarea {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    transition: background var(--transition);
+    transition: background var(--transition), transform var(--transition);
 }
 
     .btn-primary:hover {
         background: #c19f57;
+        transform: translateY(-1px);
     }
 
     .btn-primary:disabled {
@@ -1033,12 +1034,13 @@ textarea {
     font-size: 13.5px;
     font-weight: 700;
     cursor: pointer;
-    transition: border-color var(--transition);
+    transition: border-color var(--transition), color var(--transition), transform var(--transition);
 }
 
     .btn-secondary:hover {
         border-color: var(--color-blue-medium);
         color: var(--color-blue-medium);
+        transform: translateY(-1px);
     }
 
 .btn-danger {
@@ -1388,62 +1390,62 @@ table.denuncias-table {
         position: relative;
     }
 
-.hero-publico__logos {
-    display: flex;
-    align-items: start;
-    justify-content: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-5);
-}
+    .hero-publico__logos {
+        display: flex;
+        align-items: start;
+        justify-content: center;
+        gap: var(--space-4);
+        margin-bottom: var(--space-5);
+    }
 
     .hero-publico__logos img.hero-publico__logo {
-        height: 100px;
-        width: auto;
-        max-height: 100px;
-        max-width: none;
-        object-fit: contain;
-        display: inline-block;
-        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
-        border-radius: 8px; /* Bordes redondeados */
-    }
-
-
-
-.hero-publico .eyebrow {
-    font-size: 11px;
-    letter-spacing: 2.4px;
-    text-transform: uppercase;
-    color: var(--color-gold);
-    font-weight: 700;
-}
-
-.hero-publico h1 {
-    color: var(--color-white);
-    font-size: 40px;
-    margin: var(--space-2) 0 0;
-    position: relative;
+    height: 100px;
+    width: auto;
+    max-height: 100px;
+    max-width: none;
+    object-fit: contain;
     display: inline-block;
-    padding-bottom: var(--space-3);
-}
-
-    .hero-publico h1::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 1000px;
-        height: 3px;
-        border-radius: var(--radius-pill);
-        background: var(--color-gold);
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    border-radius: 8px; /* Bordes redondeados */
     }
 
-.hero-publico p {
-    font-size: 16px;
-    color: var(--color-ink-invertido);
-    max-width: 980px;
-    margin: var(--space-2) auto 0;
-}
+
+
+    .hero-publico .eyebrow {
+        font-size: 11px;
+        letter-spacing: 2.4px;
+        text-transform: uppercase;
+        color: var(--color-gold);
+        font-weight: 700;
+    }
+
+    .hero-publico h1 {
+        color: var(--color-white);
+        font-size: 40px;
+        margin: var(--space-2) 0 0;
+        position: relative;
+        display: inline-block;
+        padding-bottom: var(--space-3);
+    }
+
+        .hero-publico h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 3px;
+            border-radius: var(--radius-pill);
+            background: var(--color-gold);
+        }
+
+    .hero-publico p {
+        font-size: 16px;
+        color: var(--color-ink-invertido);
+        max-width: 980px;
+        margin: var(--space-2) auto 0;
+    }
 
 /* Indicador de pasos del formulario */
 .progress-wrap {
@@ -1541,6 +1543,10 @@ table.denuncias-table {
     margin: var(--space-6) auto 60px;
     padding: 0 var(--space-5);
 }
+
+    .main-publico > section + section {
+        margin-top: var(--space-7);
+    }
 
 .section-divider-label {
     font-size: 10.5px;
@@ -1956,21 +1962,21 @@ table.denuncias-table {
     text-align: left;
 }
 
-    .footer-publico__links li {
-        margin-bottom: 4px;
-    }
+.footer-publico__links li {
+    margin-bottom: 4px;
+}
 
-    .footer-publico__links a {
-        color: #d1d5db;
-        text-decoration: none;
-        font-size: 12px;
-        transition: color var(--transition);
-    }
+.footer-publico__links a {
+    color: #d1d5db;
+    text-decoration: none;
+    font-size: 12px;
+    transition: color var(--transition);
+}
 
-        .footer-publico__links a:hover {
-            color: var(--color-gold);
-            text-decoration: underline;
-        }
+.footer-publico__links a:hover {
+    color: var(--color-gold);
+    text-decoration: underline;
+}
 
 /* Columna 4: Redes Sociales */
 .footer-publico__col-redes {
@@ -1988,15 +1994,15 @@ table.denuncias-table {
     transition: color var(--transition), transform var(--transition);
 }
 
-    .footer-publico__red:hover {
-        color: var(--color-gold);
-        transform: translateY(-2px);
-    }
+.footer-publico__red:hover {
+    color: var(--color-gold);
+    transform: translateY(-2px);
+}
 
-    .footer-publico__red svg {
-        width: 26px;
-        height: 26px;
-    }
+.footer-publico__red svg {
+    width: 26px;
+    height: 26px;
+}
 
 .footer-publico__redes-separador {
     display: inline-block;
@@ -2139,4 +2145,178 @@ table.denuncias-table {
     .btn-texto-peligro:hover {
         color: var(--color-danger);
         text-decoration: underline;
+    }
+
+/* ==========================================================================
+   12. PÁGINA PRINCIPAL (LANDING PÚBLICA)
+   Clases exclusivas del home público, con prefijo "pp-" para no afectar el
+   resto del sistema. El resto del contenido (hero-publico, card, row2/row3,
+   btn-primary/secondary, banner-info, progress-*, footer-publico) reutiliza
+   tal cual las clases ya definidas arriba, para mantener consistencia (D02).
+   ========================================================================== */
+
+/* Transición de salida/entrada entre vistas (ver hook useNavegacionAnimada
+   en App.jsx). Un fundido con leve zoom y desenfoque, para que cambiar de
+   página se sienta como un corte de escena y no como un salto instantáneo.
+   La regla de prefers-reduced-motion de la sección 2 ya la desactiva para
+   quien prefiera menos movimiento. */
+.pp-transicion-vista {
+    animation-duration: 420ms;
+    animation-timing-function: var(--ease-suave);
+    animation-fill-mode: both;
+}
+
+    .pp-transicion-vista--entrada {
+        animation-name: pp-vista-entrada;
+    }
+
+    .pp-transicion-vista--salida {
+        animation-name: pp-vista-salida;
+    }
+
+@keyframes pp-vista-entrada {
+    from {
+        opacity: 0;
+        transform: scale(1.015);
+        filter: blur(6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
+    }
+}
+
+@keyframes pp-vista-salida {
+    from {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.97);
+        filter: blur(6px);
+    }
+}
+
+/* Revelado progresivo de secciones al hacer scroll (ver hook useEnPantalla).
+   La regla de prefers-reduced-motion de la sección 2 ya desactiva esta
+   transición para quien prefiera menos movimiento. */
+.pp-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s var(--ease-suave), transform 0.7s var(--ease-suave);
+}
+
+    .pp-reveal.pp-reveal--visible {
+        opacity: 1;
+        transform: none;
+    }
+
+/* Espaciado estándar entre el encabezado de una sección y la cuadrícula
+   de tarjetas que le sigue (reemplaza estilos en línea repetidos). */
+.pp-seccion-grid {
+    margin-top: var(--space-5);
+}
+
+/* Realce de interacción opcional para tarjetas informativas del home. */
+.pp-card-hover {
+    transition: transform var(--ease-suave), box-shadow var(--ease-suave);
+}
+
+    .pp-card-hover:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-card-hover);
+    }
+
+/* Logo pequeño dentro de la barra superior pública. */
+.pp-topbar-logo {
+    height: 38px;
+    width: auto;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+/* Fila de botones de llamada a la acción del hero. */
+.pp-hero-cta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+}
+
+.pp-hero-nota {
+    margin-top: var(--space-4);
+}
+
+/* Invitación animada a bajar hacia "Cómo funciona". */
+.pp-scroll-cue {
+    display: inline-flex;
+    margin-top: var(--space-6);
+    color: var(--color-ink-invertido);
+    opacity: 0.85;
+    animation: pp-bounce 2.2s ease-in-out infinite;
+    transition: color var(--transition), opacity var(--transition);
+}
+
+    .pp-scroll-cue:hover {
+        color: var(--color-gold);
+        opacity: 1;
+    }
+
+@keyframes pp-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+}
+
+/* Fila genérica "texto + acción al final", reutilizable en cualquier tarjeta
+   o banner que combine un mensaje con un botón de llamada a la acción. */
+.pp-fila-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+}
+
+    .pp-fila-cta > *:last-child {
+        flex-shrink: 0;
+    }
+
+@media (max-width: 640px) {
+    .pp-fila-cta {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+}
+
+/* Indicador de progreso reutilizado a mitad de página (no superpuesto a un
+   hero): cancela el margen negativo y el ancho máximo pensados para ese caso. */
+.pp-progress-inline {
+    margin: var(--space-5) auto 0;
+    max-width: none;
+    padding: 0;
+}
+
+/* Banner final de llamada a la acción: más protagonismo que un banner-info
+   estándar, pensado para cerrar la página principal. */
+.pp-cta-final {
+    background: linear-gradient(135deg, var(--color-navy), var(--color-blue));
+    color: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6) var(--space-7);
+    box-shadow: var(--shadow-lg);
+    border-top: 3px solid var(--color-gold);
+}
+
+    .pp-cta-final h3 {
+        color: var(--color-white);
+    }
+
+    .pp-cta-final p {
+        margin: 0;
+        color: var(--color-ink-invertido);
     }
