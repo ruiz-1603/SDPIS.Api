@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useFormularioDenuncia } from '../../../hooks/useFormularioDenuncia';
 import { useUbicaciones } from '../../../hooks/useUbicaciones';
 import { BotonAgregarProducto } from '../../../components/comunes/BotonAgregarProducto';
 import { IndicadorProgreso } from '../../../components/comunes/IndicadorProgreso';
 import { PiePaginaPublico } from '../../../components/comunes/PiePaginaPublico';
 import { registrarDenuncia } from '../../../services/denunciaService';
+import { ModalConfirmacion } from '../../../components/comunes/ModalConfirmacion';
 import {
   validarUbicacion,
   validarHecho,
@@ -49,7 +50,8 @@ export function FormularioDenuncia({ onVolverInicio } = {}) {
 
   const { obtenerDistritos, obtenerIdCanton, obtenerIdDistrito } = useUbicaciones();
 
-  const [numeroDenuncia, setNumeroDenuncia] = useState(null);
+    const [numeroDenuncia, setNumeroDenuncia] = useState(null);
+    const [mostrarConfirmacionCancelar, setMostrarConfirmacionCancelar] = useState(false);
   const [enviando, setEnviando] = useState(false);
   // Pasos en los que la persona ya intentó avanzar: solo a partir de ese
   // intento se muestran los errores en pantalla (heurística 9), para no
@@ -63,14 +65,23 @@ export function FormularioDenuncia({ onVolverInicio } = {}) {
   // Heurística 9 (Ayudar a reconocer y recuperarse de errores): cuando no
   // se puede avanzar por campos faltantes/incorrectos, se lleva a la persona
   // directamente al primer campo con error, en vez de dejarla buscarlo.
-  useEffect(() => {
-    if (intentoFallidoId === 0) return;
-    const campoConError = document.querySelector('.field.error');
-    if (!campoConError) return;
-    campoConError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const control = campoConError.querySelector('input, select, textarea');
-    if (control) control.focus({ preventScroll: true });
-  }, [intentoFallidoId]);
+    useEffect(() => {
+        if (intentoFallidoId === 0) return;
+        const campoConError = document.querySelector('.field.error');
+        if (!campoConError) return;
+        campoConError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const control = campoConError.querySelector('input, select, textarea');
+        if (control) control.focus({ preventScroll: true });
+    }, [intentoFallidoId]);
+
+    const esPrimerRenderRef = useRef(true);
+    useEffect(() => {
+        if (esPrimerRenderRef.current) {
+            esPrimerRenderRef.current = false;
+            return;
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [estado.paso]);
 
   const distritoAplica = obtenerDistritos(estado.ubicacion.provincia, estado.ubicacion.canton).length > 0;
   const erroresUbicacion = validarUbicacion(estado.ubicacion, { distritoAplica });
@@ -141,15 +152,15 @@ export function FormularioDenuncia({ onVolverInicio } = {}) {
   // Heurística 3 (Control y libertad del usuario): salida de emergencia
   // clara para abandonar la denuncia, con confirmación previa porque la
   // acción tiene consecuencias (se pierde la información ingresada).
-  function manejarCancelar() {
-    const confirmarCancelar = window.confirm(
-      'Se perderá toda la información ingresada y el formulario volverá a comenzar. ¿Desea continuar?'
-    );
-    if (confirmarCancelar) {
-      reiniciarFormulario();
-      setPasosConIntento(new Set());
+    function manejarCancelar() {
+        setMostrarConfirmacionCancelar(true);
     }
-  }
+
+    function confirmarCancelar() {
+        reiniciarFormulario();
+        setPasosConIntento(new Set());
+        setMostrarConfirmacionCancelar(false);
+    }
 
   // Heurística 3 (Control y libertad del usuario): el logo del sistema
   // permite volver a la página principal desde cualquier paso del formulario.
@@ -157,7 +168,14 @@ export function FormularioDenuncia({ onVolverInicio } = {}) {
     if (!onVolverInicio) return;
     evento.preventDefault();
     onVolverInicio();
-  }
+    }
+    function manejarAtras() {
+        if (estado.paso === 1) {
+            onVolverInicio?.();
+            return;
+        }
+        irPasoAnterior();
+    }
 
   if (numeroDenuncia) {
     return <ConfirmacionDenuncia numeroDenuncia={numeroDenuncia} denunciante={estado.denunciante} />;
@@ -242,14 +260,16 @@ export function FormularioDenuncia({ onVolverInicio } = {}) {
         )}
 
         <div className="form-nav">
-          <div className="form-nav__grupo-izquierda">
-            <button type="button" className="btn-texto-peligro" onClick={manejarCancelar}>
-              Cancelar denuncia
-            </button>
-            <button type="button" className="btn-secondary" onClick={irPasoAnterior} disabled={estado.paso === 1}>
-              Atrás
-            </button>
-          </div>
+                  <div className="form-nav__grupo-izquierda">
+                      {estado.paso > 1 && (
+                          <button type="button" className="btn-texto-peligro" onClick={manejarCancelar}>
+                              Cancelar denuncia
+                          </button>
+                      )}
+                      <button type="button" className="btn-secondary" onClick={manejarAtras}>
+                          {estado.paso === 1 ? 'Volver al inicio' : 'Atrás'}
+                      </button>
+                  </div>
 
           {estado.paso < PASOS.length ? (
             <button type="button" className="btn-primary" onClick={manejarSiguiente}>
@@ -262,7 +282,14 @@ export function FormularioDenuncia({ onVolverInicio } = {}) {
           )}
         </div>
       </main>
-
+          <ModalConfirmacion
+              visible={mostrarConfirmacionCancelar}
+              titulo="Cancelar denuncia"
+              mensaje="Se perderá toda la información ingresada y el formulario volverá a comenzar. ¿Desea continuar?"
+              textoConfirmar="Sí, cancelar"
+              onConfirmar={confirmarCancelar}
+              onCancelar={() => setMostrarConfirmacionCancelar(false)}
+          />
       <PiePaginaPublico />
     </>
   );

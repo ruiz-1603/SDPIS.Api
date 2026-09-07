@@ -1,5 +1,4 @@
 import { useEnPantalla } from '../../../hooks/useEnPantalla';
-import logoMinisterio from '../../../assets/images/logoAzul_Ministerio.png';
 import logoSdpis from '../../../assets/images/logoAzul_SDPIS.png';
 
 // onDenunciar: () => void — navega al formulario público de denuncia
@@ -14,11 +13,6 @@ export function HeroPrincipal({ onDenunciar, onConsultarCaso }) {
       className={`hero-publico pp-reveal${visible ? ' pp-reveal--visible' : ''}`}
     >
       <div className="hero-publico__logos">
-        <img
-          src={logoMinisterio}
-          alt="Ministerio de Salud de Costa Rica"
-          className="hero-publico__logo"
-        />
         <img
           src={logoSdpis}
           alt="SDPIS — Sistema de Denuncias de Productos de Interés Sanitario"

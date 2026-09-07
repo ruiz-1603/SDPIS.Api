@@ -17,10 +17,19 @@ const MOTIVOS_MAP = {
 };
 
 const TIPOS_PRODUCTO_MAP = {
-  'Medicamento': 1,
-  'Cosmético': 2,
-  'Alimento': 3,
-  'Dispositivo médico': 4,
+    'Alimentos': 1,
+    'Cosméticos': 2,
+    'Equipo y material biomédico': 3,
+    'Higiénicos': 4,
+    'Medicamentos': 5,
+    'Suplementos a la dieta': 6,
+    'Naturales': 7,
+    'Plaguicidas de uso doméstico': 8,
+    'Plaguicidas de uso profesional': 9,
+    'Fertilizantes de uso doméstico': 10,
+    'Tintas de tatuaje': 11,
+    'Químicos': 12,
+    'Productos medicinales a base de cannabis': 13,
 };
 
 // Necesitamos las funciones de useUbicaciones para resolver los IDs.

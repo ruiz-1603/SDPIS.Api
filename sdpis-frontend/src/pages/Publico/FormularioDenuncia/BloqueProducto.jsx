@@ -1,8 +1,21 @@
 import { SelectorMotivos } from '../../../components/comunes/SelectorMotivos';
 
 // TODO: reemplazar por el catálogo real de tipo_producto (Base de Datos B02) vía services/
-const TIPOS_PRODUCTO = ['Medicamento', 'Cosmético', 'Alimento', 'Dispositivo médico'];
-
+const TIPOS_PRODUCTO = [
+    'Alimentos',
+    'Cosméticos',
+    'Equipo y material biomédico',
+    'Higiénicos',
+    'Medicamentos',
+    'Suplementos a la dieta',
+    'Naturales',
+    'Plaguicidas de uso doméstico',
+    'Plaguicidas de uso profesional',
+    'Fertilizantes de uso doméstico',
+    'Tintas de tatuaje',
+    'Químicos',
+    'Productos medicinales a base de cannabis',
+];
 // producto: { nombre, descripcion, registroSanitario, marca, lote, fabricante,
 //             paisOrigen, presentacion, fechaCompra, tipoProducto, motivos }
 // index: posición del bloque (para el rótulo "Producto N")

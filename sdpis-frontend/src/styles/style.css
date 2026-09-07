@@ -1399,14 +1399,14 @@ table.denuncias-table {
     }
 
     .hero-publico__logos img.hero-publico__logo {
-    height: 100px;
-    width: auto;
-    max-height: 100px;
-    max-width: none;
-    object-fit: contain;
-    display: inline-block;
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
-    border-radius: 8px; /* Bordes redondeados */
+            height: 150px; /* antes 100px — ahora es el único protagonista */
+            width: auto;
+            max-height: 150px;
+            max-width: none;
+            object-fit: contain;
+            display: inline-block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+            border-radius: 8px;
     }
 
 
@@ -2132,19 +2132,21 @@ table.denuncias-table {
 }
 
 .btn-texto-peligro {
-    background: none;
-    border: none;
+    background: transparent;
+    border: 1.5px solid transparent;
     color: var(--color-ink-muted);
-    font-size: 13px;
-    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 11px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
     cursor: pointer;
-    padding: 8px 4px;
-    transition: color var(--transition);
+    transition: background var(--transition), border-color var(--transition), color var(--transition);
 }
 
     .btn-texto-peligro:hover {
+        background: var(--color-danger-soft);
+        border-color: var(--color-danger);
         color: var(--color-danger);
-        text-decoration: underline;
     }
 
 /* ==========================================================================
@@ -2230,9 +2232,8 @@ table.denuncias-table {
         box-shadow: var(--shadow-card-hover);
     }
 
-/* Logo pequeño dentro de la barra superior pública. */
 .pp-topbar-logo {
-    height: 38px;
+    height: 65px; /* antes 38px */
     width: auto;
     border-radius: 6px;
     flex-shrink: 0;
